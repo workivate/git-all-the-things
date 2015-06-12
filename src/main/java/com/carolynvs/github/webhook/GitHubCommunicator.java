@@ -23,9 +23,8 @@ public class GitHubCommunicator
     public Boolean validWebHook(String secret, String body, String signature)
     {
         byte[] rawBody = body.getBytes(StandardCharsets.UTF_8);
-
-        String webhookSecret = secret;
-        SecretKeySpec keySpec = new SecretKeySpec(webhookSecret.getBytes(StandardCharsets.UTF_8), HMAC_SHA1);
+        SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_SHA1);
+        signature = signature.replace("sha1=", "");
 
         try {
             Mac mac = Mac.getInstance(HMAC_SHA1);
