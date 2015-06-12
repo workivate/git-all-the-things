@@ -7,6 +7,9 @@ public class PullRequestEvent
     @JsonProperty("action")
     public String Action;
 
-    @JsonProperty("number")
-    public Integer Number;
+    @JsonProperty("pull_request")
+    public PullRequest PullRequest;
+
+    @JsonProperty("sender")
+    public GitHubUser Sender;
 }
