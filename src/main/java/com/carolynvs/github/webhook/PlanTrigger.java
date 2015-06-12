@@ -1,6 +1,8 @@
 package com.carolynvs.github.webhook;
 
+import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.chains.Chain;
+import com.atlassian.bamboo.plan.ExecutionRequestResult;
 import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanKey;
 import com.atlassian.bamboo.plan.PlanManager;
@@ -14,19 +16,22 @@ public class PlanTrigger
 {
     private final PlanManager planManager;
     private final PlanExecutionManager planExecutionManager;
+    private final BambooLinkBuilder bambooLinkBuilder;
 
-    public PlanTrigger(PlanManager planManager, PlanExecutionManager planExecutionManager)
+    public PlanTrigger(PlanManager planManager, PlanExecutionManager planExecutionManager, BambooLinkBuilder bambooLinkBuilder)
     {
         this.planManager = planManager;
         this.planExecutionManager = planExecutionManager;
+        this.bambooLinkBuilder = bambooLinkBuilder;
     }
 
-    public void execute(PlanKey planKey, User user, Map<String, String> variables)
+    public String execute(PlanKey planKey, User user, Map<String, String> variables)
     {
         ImmutableChain plan = planManager.getPlanByKey(planKey, Chain.class);
 
         Map<String, String> params = new HashMap<String, String>();
 
-        planExecutionManager.startManualExecution(plan, user, params, variables);
+        ExecutionRequestResult result = planExecutionManager.startManualExecution(plan, user, params, variables);
+        return bambooLinkBuilder.getBuildUrl(result.getPlanResultKey().toString());
     }
 }

@@ -11,6 +11,7 @@
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
 
+    <component-import key="AdministrationConfigurationService" interface="com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService" />
     <component-import key="PlanExecutionManager" interface="com.atlassian.bamboo.plan.PlanExecutionManager" />
     <component-import key="PlanManager" interface="com.atlassian.bamboo.plan.PlanManager" />
 

@@ -1,9 +1,17 @@
 package com.carolynvs.github.webhook;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -33,8 +41,29 @@ public class GitHubCommunicator
         }
     }
 
-    public void setPullRequestStatus(String token, Integer pullRequestId, String state, String description)
+    public void setPullRequestStatus(String token, PullRequestEvent pullRequestEvent, GitHubSetCommitStatusRequest statusRequest)
+            throws Exception
     {
-        // curl -H "Authorization: token MY_TOKEN" --request POST --data '{"state": "pending", "description": "Build is running", "target_url": "${bamboo.buildResultsUrl}"}' https://api.github.com/repos/USER/REPO/statuses/${bamboo.repository.revision.number} > /dev/null
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(statusRequest);
+
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(pullRequestEvent.StatusUrl);
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", "token " + token);
+            httpPost.setEntity(new StringEntity(json));
+
+            HttpResponse response = httpClient.execute(httpPost);
+
+            Integer statusCode = response.getStatusLine().getStatusCode();
+            if(statusCode < 200 || statusCode > 299)
+                throw new Exception(String.format("GitHub returned an HTTP status of %s", statusCode));
+        }
+        catch(Exception ex)
+        {
+            throw new Exception("An error occurred setting the pull request status.", ex);
+        }
     }
 }

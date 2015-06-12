@@ -14,22 +14,27 @@ public class PullRequestBuilder
     private final PluginDataManager pluginData;
     private final GitHubCommunicator github;
 
-    public PullRequestBuilder(PlanManager planManager, PlanExecutionManager planExecutionManager, PluginDataManager pluginData, GitHubCommunicator github)
+    public PullRequestBuilder(PlanManager planManager, PlanExecutionManager planExecutionManager, PluginDataManager pluginData, GitHubCommunicator github, BambooLinkBuilder bambooLinkBuilder)
     {
         this.pluginData = pluginData;
         this.github = github;
-        this.planTrigger = new PlanTrigger(planManager, planExecutionManager);
+        this.planTrigger = new PlanTrigger(planManager, planExecutionManager, bambooLinkBuilder);
     }
 
-    public void build(String planKey, PullRequest pullRequest)
+    public void build(String planKey, PullRequestEvent pullRequestEvent)
+            throws Exception
     {
         Map<String, String> variables = new HashMap<String, String>();
-        variables.put("pullrequest", pullRequest.Number.toString());
+        variables.put("pullrequest", pullRequestEvent.PullRequest.Number.toString());
 
-        User triggerUser = pluginData.getAssociatedUser(planKey, pullRequest);
-        planTrigger.execute(PlanKeys.getPlanKey(planKey), triggerUser, variables);
+        User triggerUser = pluginData.getAssociatedUser(planKey, pullRequestEvent);
+        String buildResultUrl = planTrigger.execute(PlanKeys.getPlanKey(planKey), triggerUser, variables);
 
         String token = pluginData.getOAuthToken(planKey);
-        github.setPullRequestStatus(token, pullRequest.Number, "pending", "build is running");
+        GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest();
+        statusRequest.Status = GitHubCommitState.Pending;
+        statusRequest.Description = "The build is running";
+        statusRequest.BuildResultUrl = buildResultUrl;
+        github.setPullRequestStatus(token, pullRequestEvent, statusRequest);
     }
 }

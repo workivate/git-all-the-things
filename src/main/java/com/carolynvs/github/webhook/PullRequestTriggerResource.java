@@ -1,5 +1,6 @@
 package com.carolynvs.github.webhook;
 
+import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanManager;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,11 +18,12 @@ public class PullRequestTriggerResource
     private final GitHubCommunicator github;
     private final PluginDataManager pluginData;
 
-    public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager)
+    public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService)
     {
         github = new GitHubCommunicator();
         pluginData = new PluginDataManager();
-        pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github);
+        BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
+        pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github, bambooLinkBuilder);
     }
 
     @POST
@@ -39,7 +41,12 @@ public class PullRequestTriggerResource
         if(!isPullRequestContentChanged(pullRequestEvent))
             return Response.status(Response.Status.ACCEPTED).build();
 
-        pullRequestBuilder.build(planKey, pullRequestEvent.PullRequest);
+        try {
+            pullRequestBuilder.build(planKey, pullRequestEvent);
+        } catch (Exception ex) {
+            return Response.serverError().entity(new ServerError(ex)).build();
+        }
+
         return Response.status(Response.Status.OK).build();
     }
 
