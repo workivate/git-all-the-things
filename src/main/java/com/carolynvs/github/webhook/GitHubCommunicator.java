@@ -20,7 +20,7 @@ public class GitHubCommunicator
 {
     private static final String HMAC_SHA1 = "HmacSHA1";
 
-    public Boolean validWebHook(String secret, String body, String signature)
+    public boolean validWebHook(String secret, String body, String signature)
     {
         byte[] rawBody = body.getBytes(StandardCharsets.UTF_8);
         SecretKeySpec keySpec = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_SHA1);

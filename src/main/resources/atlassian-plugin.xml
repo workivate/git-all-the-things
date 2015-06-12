@@ -7,9 +7,20 @@
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
 
+    <!-- add our i18n resource -->
+    <resource type="i18n" name="i18n" location="i18n"/>
+
     <rest name="GitHub WebHook" key="com.carolynvs.github.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
+
+    <taskType key="PullRequestCheckout" name="Pull Request Checkout" class="com.carolynvs.github.task.PullRequestCheckoutTask">
+        <description>Checks out a GitHub pull request</description>
+        <resource type="download" name="icon" location="images/pluginLogo.png"/>
+        <configuration class="com.carolynvs.github.task.PullRequestCheckoutTaskConfigurator"/>
+        <resource type="freemarker" name="edit" location="task/edit-pullrequest-checkout.ftl"/>
+        <resource type="freemarker" name="view" location="task/view-pullrequest-checkout.ftl"/>
+    </taskType>
 
     <component-import key="AdministrationConfigurationService" interface="com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService" />
     <component-import key="PlanExecutionManager" interface="com.atlassian.bamboo.plan.PlanExecutionManager" />
