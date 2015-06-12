@@ -49,7 +49,7 @@ public class PullRequestTriggerResource
         try {
             pullRequestBuilder.build(planKey, pullRequestEvent);
         } catch (Exception ex) {
-            return Response.serverError().entity(new ServerError(ex)).build();
+            return Response.serverError().entity(new ServerError(ex).toJson()).build();
         }
 
         return Response.status(Response.Status.OK).build();

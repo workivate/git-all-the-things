@@ -1,6 +1,9 @@
 package com.carolynvs.github.webhook;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
 
 public class ServerError
 {
@@ -18,4 +21,13 @@ public class ServerError
 
     @JsonProperty("exception")
     public String Exception;
+
+    public String toJson()
+    {
+        try {
+            return new ObjectMapper().writeValueAsString(this);
+        } catch (IOException e) {
+            return "Unable to serialize ServerError. Check the server logs for the original exception.";
+        }
+    }
 }
