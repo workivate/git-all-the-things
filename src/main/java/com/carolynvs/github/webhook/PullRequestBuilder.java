@@ -35,6 +35,6 @@ public class PullRequestBuilder
         statusRequest.Status = GitHubCommitState.Pending;
         statusRequest.Description = "The build is running";
         statusRequest.BuildResultUrl = buildResultUrl;
-        github.setPullRequestStatus(token, pullRequestEvent, statusRequest);
+        github.setPullRequestStatus(token, pullRequestEvent.PullRequest, statusRequest);
     }
 }

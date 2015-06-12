@@ -9,4 +9,7 @@ public class PullRequest
 
     @JsonProperty("user")
     public GitHubUser Owner;
+
+    @JsonProperty("statuses_url")
+    public String StatusUrl;
 }

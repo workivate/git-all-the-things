@@ -40,7 +40,7 @@ public class GitHubCommunicator
         }
     }
 
-    public void setPullRequestStatus(String token, PullRequestEvent pullRequestEvent, GitHubSetCommitStatusRequest statusRequest)
+    public void setPullRequestStatus(String token, PullRequest pullRequest, GitHubSetCommitStatusRequest statusRequest)
             throws Exception
     {
         try
@@ -49,7 +49,7 @@ public class GitHubCommunicator
             String json = mapper.writeValueAsString(statusRequest);
 
             HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(pullRequestEvent.StatusUrl);
+            HttpPost httpPost = new HttpPost(pullRequest.StatusUrl);
             httpPost.setHeader("Content-type", "application/json");
             httpPost.setHeader("Authorization", "token " + token);
             httpPost.setEntity(new StringEntity(json));

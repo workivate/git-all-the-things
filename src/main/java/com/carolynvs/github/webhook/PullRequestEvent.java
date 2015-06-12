@@ -10,9 +10,6 @@ public class PullRequestEvent
     @JsonProperty("pull_request")
     public PullRequest PullRequest;
 
-    @JsonProperty("statuses_url")
-    public String StatusUrl;
-
     @JsonProperty("sender")
     public GitHubUser Sender;
 }
