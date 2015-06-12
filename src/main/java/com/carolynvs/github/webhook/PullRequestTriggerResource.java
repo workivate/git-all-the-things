@@ -9,7 +9,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
+@AnonymousAllowed
 @Path("/pullrequest-trigger")
 @Consumes({MediaType.APPLICATION_JSON})
 public class PullRequestTriggerResource
