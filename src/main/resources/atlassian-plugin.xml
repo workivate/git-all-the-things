@@ -7,26 +7,8 @@
         <param name="plugin-logo">images/pluginLogo.png</param>
     </plugin-info>
 
-    <!-- add our i18n resource -->
-    <resource type="i18n" name="i18n" location="github.webhook"/>
-    
-    <!-- add our web resources -->
-    <web-resource key="github.webhook-resources" name="github.webhook Web Resources">
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        
-        <resource type="download" name="github.webhook.css" location="/css/github.webhook.css"/>
-        <resource type="download" name="github.webhook.js" location="/js/github.webhook.js"/>
-        <resource type="download" name="images/" location="/images"/>
+    <rest name="GitHub WebHook" key="com.carolynvs.github.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
+        <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
+    </rest>
 
-        <context>github.webhook</context>
-    </web-resource>
-    
-    <!-- publish our component -->
-    <component key="myPluginComponent" class="com.carolynvs.github.webhook.MyPluginComponentImpl" public="true">
-        <interface>com.carolynvs.github.webhook.MyPluginComponent</interface>
-    </component>
-    
-    <!-- import from the product container -->
-    <component-import key="applicationProperties" interface="com.atlassian.sal.api.ApplicationProperties" />
-    
 </atlassian-plugin>

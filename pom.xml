@@ -32,7 +32,23 @@
             <version>${bamboo.version}</version>
             <scope>provided</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>com.atlassian.bamboo.plugins</groupId>
+            <artifactId>atlassian-bamboo-plugin-rest</artifactId>
+            <version>${bamboo.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20140107</version>
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
