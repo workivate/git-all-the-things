@@ -30,8 +30,11 @@ public class PullRequestTriggerResource
 
     @POST
     @Path("{plan-key}")
-    public Response post(@PathParam("plan-key") String planKey, @HeaderParam("X_HUB_SIGNATURE") String signature, String jsonBody)
+    public Response post(@PathParam("plan-key") String planKey, @HeaderParam("X-GitHub-Event") String event, @HeaderParam("X_HUB_SIGNATURE") String signature, String jsonBody)
     {
+        if(isPing(event))
+            return Response.ok().build();
+
         PullRequestEvent pullRequestEvent = parsePullRequestEvent(jsonBody);
         if(pullRequestEvent == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -50,6 +53,11 @@ public class PullRequestTriggerResource
         }
 
         return Response.status(Response.Status.OK).build();
+    }
+
+    private boolean isPing(String event)
+    {
+        return event.equals("ping");
     }
 
     private boolean isPullRequestContentChanged(PullRequestEvent pullRequestEvent)
