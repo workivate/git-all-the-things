@@ -30,7 +30,7 @@ public class PullRequestTriggerResource
 
     @POST
     @Path("{plan-key}")
-    public Response post(@PathParam("plan-key") String planKey, @HeaderParam("X-GitHub-Event") String event, @HeaderParam("X_HUB_SIGNATURE") String signature, String jsonBody)
+    public Response post(@PathParam("plan-key") String planKey, @HeaderParam("X-GitHub-Event") String event, @HeaderParam("X-Hub-Signature") String signature, String jsonBody)
     {
         if(isPing(event))
             return Response.ok().build();
