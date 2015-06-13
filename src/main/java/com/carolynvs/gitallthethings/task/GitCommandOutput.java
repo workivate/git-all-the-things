@@ -1,4 +1,4 @@
-package com.carolynvs.github.task;
+package com.carolynvs.gitallthethings.task;
 
 import com.atlassian.utils.process.ProcessHandler;
 import com.atlassian.utils.process.StringOutputHandler;

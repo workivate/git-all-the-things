@@ -1,7 +1,6 @@
-package com.carolynvs.github.webhook;
+package com.carolynvs.gitallthethings.webhook;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -11,7 +10,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;

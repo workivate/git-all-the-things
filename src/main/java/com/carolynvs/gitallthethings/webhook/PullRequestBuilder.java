@@ -1,4 +1,4 @@
-package com.carolynvs.github.webhook;
+package com.carolynvs.gitallthethings.webhook;
 
 import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanKeys;

@@ -10,14 +10,15 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="i18n"/>
 
-    <rest name="GitHub WebHook" key="com.carolynvs.github.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
+    <rest name="GitHub WebHook" key="com.carolynvs.gitallthethings.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
 
-    <taskType key="PullRequestCheckout" name="Pull Request Checkout" class="com.carolynvs.github.task.PullRequestCheckoutTask">
-        <description>Checks out a GitHub pull request</description>
-        <resource type="download" name="icon" location="images/pluginLogo.png"/>
-        <configuration class="com.carolynvs.github.task.PullRequestCheckoutTaskConfigurator"/>
+    <taskType key="PullRequestCheckout" name="Pull Request Checkout" class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTask">
+        <description>Checkout a pull request from a repository</description>
+        <category name="repository"/>
+        <resource type="download" name="icon" location="images/pullrequest.png"/>
+        <configuration class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="task/edit-pullrequest-checkout.ftl"/>
         <resource type="freemarker" name="view" location="task/view-pullrequest-checkout.ftl"/>
     </taskType>

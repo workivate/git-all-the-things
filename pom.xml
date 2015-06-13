@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.carolynvs</groupId>
-    <artifactId>github.webhook</artifactId>
+    <artifactId>gitallthethings</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <organization>
@@ -14,8 +14,9 @@
         <url>http://carolynvanslyck.com/</url>
     </organization>
 
-    <name>GitHub WebHook</name>
-    <description>Easily trigger bamboo builds from GitHub branches and pull requests.</description>
+    <name>Git All The Things!</name>
+    <description>Grab-bag of useful git bits: GitHub PullRequest WebHook, Pull Request Checkout Task
+    </description>
     <packaging>atlassian-plugin</packaging>
 
     <properties>

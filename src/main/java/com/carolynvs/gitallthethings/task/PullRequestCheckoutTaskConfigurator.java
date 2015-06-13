@@ -1,4 +1,4 @@
-package com.carolynvs.github.task;
+package com.carolynvs.gitallthethings.task;
 
 import com.atlassian.bamboo.collections.ActionParametersMap;
 import com.atlassian.bamboo.plugins.git.GitCapabilityTypeModule;

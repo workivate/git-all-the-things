@@ -1,4 +1,4 @@
-package com.carolynvs.github.task;
+package com.carolynvs.gitallthethings.task;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
