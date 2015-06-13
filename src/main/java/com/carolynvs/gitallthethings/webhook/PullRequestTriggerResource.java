@@ -3,13 +3,13 @@ package com.carolynvs.gitallthethings.webhook;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanManager;
+import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 
 @AnonymousAllowed
 @Path("/pullrequest-trigger")
@@ -22,10 +22,10 @@ public class PullRequestTriggerResource
 
     public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService)
     {
-        github = new GitHubCommunicator();
-        pluginData = new PluginDataManager();
+        this.github = new GitHubCommunicator();
+        this.pluginData = new PluginDataManager();
         BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
-        pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github, bambooLinkBuilder);
+        this.pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github, bambooLinkBuilder);
     }
 
     @POST

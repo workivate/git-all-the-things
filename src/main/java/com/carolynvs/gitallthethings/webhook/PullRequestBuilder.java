@@ -4,6 +4,7 @@ import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanKeys;
 import com.atlassian.bamboo.plan.PlanManager;
 import com.atlassian.user.User;
+import com.carolynvs.gitallthethings.PullRequestBuildContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,17 +25,15 @@ public class PullRequestBuilder
     public void build(String planKey, PullRequestEvent pullRequestEvent)
             throws Exception
     {
-        Map<String, String> variables = new HashMap<String, String>();
-        variables.put("pullrequest", pullRequestEvent.PullRequest.Number.toString());
+        PullRequestBuildContext buildContext = new PullRequestBuildContext();
+        Map<String, String> variables = buildContext.createPullRequestVariables(pullRequestEvent.PullRequest);
 
         User triggerUser = pluginData.getAssociatedUser(planKey, pullRequestEvent);
         String buildResultUrl = planTrigger.execute(PlanKeys.getPlanKey(planKey), triggerUser, variables);
 
         String token = pluginData.getOAuthToken(planKey);
-        GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest();
-        statusRequest.Status = GitHubCommitState.Pending;
-        statusRequest.Description = "The build is running";
-        statusRequest.BuildResultUrl = buildResultUrl;
+        GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest(GitHubCommitState.Pending, "The build is running", buildResultUrl);
+
         github.setPullRequestStatus(token, pullRequestEvent.PullRequest, statusRequest);
     }
 }

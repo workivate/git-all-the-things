@@ -14,7 +14,7 @@
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
 
-    <taskType key="PullRequestCheckout" name="Pull Request Checkout" class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTask">
+    <taskType key="PullRequestCheckoutTask" name="Pull Request Checkout" class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTask">
         <description>Checkout a pull request from a repository</description>
         <category name="repository"/>
         <resource type="download" name="icon" location="images/pullrequest.png"/>
@@ -23,6 +23,18 @@
         <resource type="freemarker" name="view" location="task/view-pullrequest-checkout.ftl"/>
     </taskType>
 
+    <taskType key="PullRequestReportStatusTask" name="Pull Request Report Status" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTask">
+        <description>Indicate that the status of the build should be reported when the build completes</description>
+        <category name="repository"/>
+        <resource type="download" name="icon" location="images/pullrequest.png"/>
+    </taskType>
+
+    <buildProcessorServer key="PullRequestReportStatusProcessor" name="Pull Request Report Status Processor" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTask">
+        <skipIfFailed>false</skipIfFailed>
+        <description>Report the build status of a pull request</description>
+    </buildProcessorServer>
+
+    <component-import key="CapabilityContext" interface="com.atlassian.bamboo.v2.build.agent.capability.CapabilityContext" />
     <component-import key="AdministrationConfigurationService" interface="com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService" />
     <component-import key="PlanExecutionManager" interface="com.atlassian.bamboo.plan.PlanExecutionManager" />
     <component-import key="PlanManager" interface="com.atlassian.bamboo.plan.PlanManager" />

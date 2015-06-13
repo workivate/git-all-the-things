@@ -5,9 +5,9 @@ import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.plugins.git.GitCapabilityTypeModule;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.agent.capability.CapabilityContext;
-import com.atlassian.bamboo.variable.VariableDefinitionContext;
+import com.carolynvs.gitallthethings.PullRequestBuildContext;
+import com.carolynvs.gitallthethings.webhook.PullRequest;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -28,7 +28,7 @@ public class PullRequestCheckoutTask implements TaskType
     public TaskResult execute(TaskContext taskContext)
             throws TaskException
     {
-        TaskResultBuilder resultBuilder = TaskResultBuilder.create(taskContext);
+        TaskResultBuilder resultBuilder = TaskResultBuilder.newBuilder(taskContext);
         BuildLogger buildLogger = taskContext.getBuildLogger();
 
         PullRequestCheckoutTaskContext config = readConfiguration(taskContext, buildLogger);
@@ -52,7 +52,7 @@ public class PullRequestCheckoutTask implements TaskType
                 context.Repository.mkdirs();
 
             context.Logger.addBuildLogEntry(String.format("Cloning the default repository..."));
-            GitCommandOutput cloneResult = context.Git.execute("clone", context.Remote, ".");
+            GitCommandOutput cloneResult = context.Git.execute("clone", context.Remote, context.Repository.getAbsolutePath());
             if(!cloneResult.Succeeded)
                 return false;
         }
@@ -65,13 +65,13 @@ public class PullRequestCheckoutTask implements TaskType
                 return false;
         }
 
-        context.Logger.addBuildLogEntry(String.format("Fetching Pull Request #%s...", context.PullRequest));
-        GitCommandOutput fetchResult = context.Git.execute("fetch", "--update-head-ok", "origin", String.format("pull/%1$s/head:pull/%1$s", context.PullRequest));
+        context.Logger.addBuildLogEntry(String.format("Fetching Pull Request #%s...", context.PullRequest.Number));
+        GitCommandOutput fetchResult = context.Git.execute("fetch", "--update-head-ok", "origin", String.format("pull/%1$s/head:pull/%1$s", context.PullRequest.Number));
         if(!fetchResult.Succeeded)
             return false;
 
-        context.Logger.addBuildLogEntry(String.format("Checking out Pull Request #%s...", context.PullRequest));
-        GitCommandOutput checkoutResult = context.Git.execute("checkout", String.format("pull/%s", context.PullRequest));
+        context.Logger.addBuildLogEntry(String.format("Checking out Pull Request #%s...", context.PullRequest.Number));
+        GitCommandOutput checkoutResult = context.Git.execute("checkout", String.format("pull/%s", context.PullRequest.Number));
         if(!checkoutResult.Succeeded)
             return false;
 
@@ -117,6 +117,11 @@ public class PullRequestCheckoutTask implements TaskType
 
     private PullRequestCheckoutTaskContext readConfiguration(TaskContext taskContext, BuildLogger logger)
     {
+        PullRequestBuildContext pullRequestBuildContext = new PullRequestBuildContext();
+        PullRequest pullRequest = pullRequestBuildContext.getPullRequest(taskContext.getBuildContext(), logger);
+        if(pullRequest == null)
+            return null;
+
         ConfigurationMap taskConfig = taskContext.getConfigurationMap();
         String repoPath =  taskConfig.get(PullRequestCheckoutTaskConfigurator.REPO_PATH);
         File buildDirectory = taskContext.getWorkingDirectory();
@@ -125,21 +130,6 @@ public class PullRequestCheckoutTask implements TaskType
         Map<String, String> buildMetaData = taskContext.getBuildContext().getCurrentResult().getCustomBuildData();
         String remote = buildMetaData.get("planRepository.repositoryUrl");
         String revision = buildMetaData.get("planRepository.revision");
-
-        Map<String, VariableDefinitionContext> buildVariables = taskContext.getBuildContext().getVariableContext().getEffectiveVariables();
-        if(!buildVariables.containsKey("pullrequest"))
-        {
-            logger.addErrorLogEntry("The pullrequest variable is not set.");
-            return null;
-        }
-
-        String pullRequestStr = buildVariables.get("pullrequest").getValue();
-        if(StringUtils.isEmpty(pullRequestStr) || !StringUtils.isNumeric(pullRequestStr))
-        {
-            logger.addErrorLogEntry("The pullrequest variable must be set with an integer value.");
-            return null;
-        }
-        int pullRequest = Integer.parseInt(pullRequestStr);
 
         return new PullRequestCheckoutTaskContext(logger, repo, remote, revision, pullRequest);
     }
@@ -151,7 +141,7 @@ public class PullRequestCheckoutTask implements TaskType
 
     private class PullRequestCheckoutTaskContext
     {
-        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, int pullRequest)
+        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, PullRequest pullRequest)
         {
             this.Logger = logger;
             this.Repository = repository;
@@ -169,7 +159,7 @@ public class PullRequestCheckoutTask implements TaskType
         public final String Remote;
         public final String Revision;
         public final boolean ShouldClean;
-        public final int PullRequest;
+        public final PullRequest PullRequest;
     }
 }
 
