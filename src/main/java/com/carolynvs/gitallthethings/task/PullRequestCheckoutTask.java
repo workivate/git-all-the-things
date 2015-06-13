@@ -1,9 +1,11 @@
 package com.carolynvs.gitallthethings.task;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
+import com.atlassian.bamboo.build.logger.interceptors.ErrorMemorisingInterceptor;
 import com.atlassian.bamboo.configuration.ConfigurationMap;
 import com.atlassian.bamboo.plugins.git.GitCapabilityTypeModule;
 import com.atlassian.bamboo.task.*;
+import com.atlassian.bamboo.v2.build.CurrentResult;
 import com.atlassian.bamboo.v2.build.agent.capability.CapabilityContext;
 import com.carolynvs.gitallthethings.PullRequestBuildContext;
 import com.carolynvs.gitallthethings.webhook.PullRequest;
@@ -30,14 +32,23 @@ public class PullRequestCheckoutTask implements TaskType
     {
         TaskResultBuilder resultBuilder = TaskResultBuilder.newBuilder(taskContext);
         BuildLogger buildLogger = taskContext.getBuildLogger();
+        CurrentResult currentResult = taskContext.getCommonContext().getCurrentResult();
+        ErrorMemorisingInterceptor errorLines = ErrorMemorisingInterceptor.newInterceptor();
+        buildLogger.getInterceptorStack().add(errorLines);
 
         PullRequestCheckoutTaskContext config = readConfiguration(taskContext, buildLogger);
         if(config == null)
+        {
+            currentResult.addBuildErrors(errorLines.getErrorStringList());
             return resultBuilder.failed().build();
+        }
 
         boolean success = checkoutPullRequest(config);
         if(!success)
+        {
+            currentResult.addBuildErrors(errorLines.getErrorStringList());
             return resultBuilder.failed().build();
+        }
 
         return resultBuilder.success().build();
     }
