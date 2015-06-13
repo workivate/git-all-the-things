@@ -59,8 +59,7 @@ public class PullRequestCheckoutTask implements TaskType
         boolean shouldClone = validateExistingRepository(context);
         if(shouldClone)
         {
-            if(!context.Repository.exists())
-                context.Repository.mkdirs();
+            prepDirectoryForClone(context);
 
             context.Logger.addBuildLogEntry(String.format("Cloning the default repository..."));
             GitCommandOutput cloneResult = context.Git.execute("clone", context.Remote, context.Repository.getAbsolutePath());
@@ -87,6 +86,16 @@ public class PullRequestCheckoutTask implements TaskType
             return false;
 
         return true;
+    }
+
+    private void prepDirectoryForClone(PullRequestCheckoutTaskContext context) throws TaskException {
+        if(!context.Repository.isDirectory())
+            context.Repository.delete();
+
+        if(!context.Repository.exists())
+            context.Repository.mkdirs();
+        else if(context.Repository.list().length != 0)
+            deleteDirectoryContents(context.Repository);
     }
 
     /* Prep the working directory for the clone, returning true if we should clone or false if we can skip the clone */
