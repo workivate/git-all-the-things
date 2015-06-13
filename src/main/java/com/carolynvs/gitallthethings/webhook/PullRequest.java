@@ -7,7 +7,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 public class PullRequest
 {
     @JsonProperty("number")
-    public Integer Number;
+    public int Number;
 
     @JsonProperty("user")
     public GitHubUser Owner;

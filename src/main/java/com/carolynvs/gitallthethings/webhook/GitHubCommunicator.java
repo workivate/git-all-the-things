@@ -54,7 +54,7 @@ public class GitHubCommunicator
 
             HttpResponse response = httpClient.execute(httpPost);
 
-            Integer statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response.getStatusLine().getStatusCode();
             if(statusCode < 200 || statusCode > 299)
                 throw new Exception(String.format("GitHub returned an HTTP status of %s", statusCode));
         }

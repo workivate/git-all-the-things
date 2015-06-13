@@ -139,7 +139,7 @@ public class PullRequestCheckoutTask implements TaskType
             logger.addErrorLogEntry("The pullrequest variable must be set with an integer value.");
             return null;
         }
-        Integer pullRequest = Integer.parseInt(pullRequestStr);
+        int pullRequest = Integer.parseInt(pullRequestStr);
 
         return new PullRequestCheckoutTaskContext(logger, repo, remote, revision, pullRequest);
     }
@@ -151,7 +151,7 @@ public class PullRequestCheckoutTask implements TaskType
 
     private class PullRequestCheckoutTaskContext
     {
-        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, Integer pullRequest)
+        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, int pullRequest)
         {
             this.Logger = logger;
             this.Repository = repository;
@@ -169,7 +169,7 @@ public class PullRequestCheckoutTask implements TaskType
         public final String Remote;
         public final String Revision;
         public final boolean ShouldClean;
-        public final Integer PullRequest;
+        public final int PullRequest;
     }
 }
 
