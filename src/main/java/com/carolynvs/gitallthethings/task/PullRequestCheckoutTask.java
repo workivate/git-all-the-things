@@ -48,6 +48,9 @@ public class PullRequestCheckoutTask implements TaskType
         boolean shouldClone = validateExistingRepository(context);
         if(shouldClone)
         {
+            if(!context.Repository.exists())
+                context.Repository.mkdirs();
+
             context.Logger.addBuildLogEntry(String.format("Cloning the default repository..."));
             GitCommandOutput cloneResult = context.Git.execute("clone", context.Remote, ".");
             if(!cloneResult.Succeeded)
@@ -75,26 +78,21 @@ public class PullRequestCheckoutTask implements TaskType
         return true;
     }
 
+    /* Prep the working directory for the clone, returning true if we should clone or false if we can skip the clone */
     private boolean validateExistingRepository(PullRequestCheckoutTaskContext context)
             throws TaskException
     {
-        boolean shouldClone = true;
         File gitDirectory = new File(context.Repository, ".git");
-        if(gitDirectory.exists())
-        {
-            GitCommandOutput remoteResult = context.Git.execute("remote", "show", "origin");
-            if(remoteResult.Succeeded && remoteResult.Output.contains(context.Remote))
-            {
-                // We can skip clone, the repo has been cloned properly already
-                shouldClone = false;
-            }
-            else
-            {
-                context.Logger.addBuildLogEntry("Forcing a clean clone, the existing repository does not have the correct origin remote...");
-                deleteDirectoryContents(context.Repository);
-            }
-        }
-        return shouldClone;
+        if(!gitDirectory.exists())
+            return true;
+
+        GitCommandOutput remoteResult = context.Git.execute("remote", "show", "origin");
+        if(remoteResult.Succeeded && remoteResult.Output.contains(context.Remote))
+            return false; // We can skip clone, the repo has been cloned properly already
+
+        context.Logger.addBuildLogEntry("Forcing a clean clone, the existing repository does not have the correct origin remote...");
+        deleteDirectoryContents(context.Repository);
+        return true;
     }
 
     private void deleteDirectoryContents(File rootDirectory)
