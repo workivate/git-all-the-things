@@ -13,6 +13,10 @@
 
     [@ww.textfield labelKey="gitthings.admin.token" name="token" descriptionKey="gitthings.admin.token.description"/]
 
+    [@ww.textfield labelKey="gitthings.admin.secret" name="secret" descriptionKey="gitthings.admin.secret.description"/]
+
+    [@ww.textfield labelKey="gitthings.admin.botName" name="botName" descriptionKey="gitthings.admin.botName.description"/]
+
 [/@s.form]
 </body>
 </html>

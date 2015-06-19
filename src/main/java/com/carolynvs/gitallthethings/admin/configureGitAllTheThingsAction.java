@@ -9,6 +9,8 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     private static final String GLOBAL = "";
     private final PluginDataManager pluginData;
     private String token;
+    private String secret;
+    private String botName;
 
     public ConfigureGitAllTheThingsAction(ActiveObjects ao)
     {
@@ -19,7 +21,10 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public String input()
             throws Exception
     {
-        token = pluginData.getOAuthToken(GLOBAL);
+        GitThingsConfig config = pluginData.getConfig(GLOBAL);
+        token = config.getToken();
+        secret = config.getSecret();
+        botName = config.getBotName();
 
         return INPUT;
     }
@@ -27,7 +32,7 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public String save()
             throws Exception
     {
-        pluginData.setOAuthToken(token, GLOBAL);
+        pluginData.setConfig(token, secret, botName, GLOBAL);
         return SUCCESS;
     }
 
@@ -39,5 +44,25 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public void setToken(String token)
     {
         this.token = token;
+    }
+
+    public String getSecret()
+    {
+        return secret;
+    }
+
+    public void setSecret(String secret)
+    {
+        this.secret = secret;
+    }
+
+    public String getBotName()
+    {
+        return botName;
+    }
+
+    public void setBotName(String botName)
+    {
+        this.botName = botName;
     }
 }

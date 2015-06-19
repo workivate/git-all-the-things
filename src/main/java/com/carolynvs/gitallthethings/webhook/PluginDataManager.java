@@ -13,13 +13,22 @@ public class PluginDataManager
     {
         this.ao = ao;
     }
-    public String getWebHookSecret(String planKey)
+
+    public String getWebHookSecret(final String planKey)
     {
-        // todo: store this either per repo or for all of bamboo
-        return "6ba8caf8dc2b3951e8a4a278aea23a5e97bd6d59";
+        GitThingsConfig config = getConfig(planKey);
+
+        return config.getSecret();
     }
 
     public String getOAuthToken(final String planKey)
+    {
+        GitThingsConfig config = getConfig(planKey);
+
+        return config.getToken();
+    }
+
+    public GitThingsConfig getConfig(final String planKey)
     {
         final GitThingsConfig config = ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
             @Override
@@ -30,10 +39,10 @@ public class PluginDataManager
             }
         });
 
-        return config.getToken();
+        return config;
     }
 
-    public void setOAuthToken(final String token, final String planKey)
+    public void setConfig(final String token, final String secret, final String user, final String planKey)
     {
         ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
             @Override
@@ -42,7 +51,9 @@ public class PluginDataManager
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
 
                 config.setToken(token);
+                config.setSecret(secret);
                 config.setPlanKey(planKey);
+                config.setBotName(user);
                 config.save();
                 return config;
             }
@@ -51,8 +62,9 @@ public class PluginDataManager
 
     public User getAssociatedUser(String planKey, PullRequestEvent pullRequestEvent)
     {
-        // todo: let them pick a name per repo or for all of bamboo, or use the owner/sender
-        return buildUser("GitHub");
+        GitThingsConfig config = getConfig(planKey);
+
+        return buildUser(config.getBotName());
     }
 
     private User buildUser(final String userName)

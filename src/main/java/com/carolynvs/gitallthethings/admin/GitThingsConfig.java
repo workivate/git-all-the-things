@@ -9,9 +9,15 @@ import net.java.ao.schema.Table;
 @Table("GIT_THINGS_CONFIG")
 public interface GitThingsConfig extends Entity
 {
-    public String getPlanKey();
-    public void setPlanKey(String planKey);
+    String getPlanKey();
+    void setPlanKey(String planKey);
 
-    public String getToken();
-    public void setToken(String token);
+    String getToken();
+    void setToken(String token);
+
+    String getSecret();
+    void setSecret(String secret);
+
+    String getBotName();
+    void setBotName(String botName);
 }
