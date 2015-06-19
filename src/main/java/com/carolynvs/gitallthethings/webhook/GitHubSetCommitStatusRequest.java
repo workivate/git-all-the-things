@@ -6,6 +6,7 @@ public class GitHubSetCommitStatusRequest
 {
     public GitHubSetCommitStatusRequest(String status, String description, String buildResultUrl)
     {
+        this.Context = " continuous-integration/bamboo";
         this.Status = status;
         this.Description = description;
         this.BuildResultUrl = buildResultUrl;
@@ -19,4 +20,7 @@ public class GitHubSetCommitStatusRequest
 
     @JsonProperty("target_url")
     public final String BuildResultUrl;
+
+    @JsonProperty("context")
+    public final String Context;
 }
