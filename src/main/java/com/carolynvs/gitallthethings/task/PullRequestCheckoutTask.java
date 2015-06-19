@@ -81,8 +81,12 @@ public class PullRequestCheckoutTask implements TaskType
             return false;
 
         context.Logger.addBuildLogEntry(String.format("Checking out Pull Request #%s...", context.PullRequest.Number));
-        GitCommandOutput checkoutResult = context.Git.execute("checkout", String.format("pull/%s", context.PullRequest.Number));
+        GitCommandOutput checkoutResult = context.Git.execute("checkout", "--force", String.format("pull/%s", context.PullRequest.Number));
         if(!checkoutResult.Succeeded)
+            return false;
+
+        GitCommandOutput resetResult = context.Git.execute("reset", "--hard");
+        if(!resetResult.Succeeded)
             return false;
 
         return true;
