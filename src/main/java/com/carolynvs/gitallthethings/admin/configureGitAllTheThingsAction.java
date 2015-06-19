@@ -23,7 +23,7 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
             @Override
             public GitThingsConfig doInTransaction()
             {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class);
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key is NULL");
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
                 token = config.getToken();
                 return null;
@@ -33,14 +33,13 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
         return INPUT;
     }
 
-    @Override
-    public String execute()
+    public String save()
             throws Exception
     {
         ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
             @Override
             public GitThingsConfig doInTransaction() {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class);
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key is NULL");
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
 
                 config.setToken(token);
