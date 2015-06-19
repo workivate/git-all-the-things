@@ -4,6 +4,7 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.user.User;
 import com.carolynvs.gitallthethings.admin.GitThingsConfig;
+import org.apache.commons.lang.StringUtils;
 
 public class PluginDataManager
 {
@@ -35,11 +36,19 @@ public class PluginDataManager
             public GitThingsConfig doInTransaction() {
                 GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key = ?", planKey);
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
+
+                defaultBotName(config);
                 return config;
             }
         });
 
         return config;
+    }
+
+    private void defaultBotName(GitThingsConfig config)
+    {
+        if(config.getBotName() == null || StringUtils.isEmpty(config.getBotName()))
+            config.setBotName("GitHub");
     }
 
     public void setConfig(final String token, final String secret, final String user, final String planKey)
@@ -54,6 +63,9 @@ public class PluginDataManager
                 config.setSecret(secret);
                 config.setPlanKey(planKey);
                 config.setBotName(user);
+
+                defaultBotName(config);
+
                 config.save();
                 return config;
             }
