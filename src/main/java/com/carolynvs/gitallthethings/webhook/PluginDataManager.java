@@ -4,10 +4,12 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.user.User;
 import com.carolynvs.gitallthethings.admin.GitThingsConfig;
+import net.java.ao.Query;
 import org.apache.commons.lang.StringUtils;
 
 public class PluginDataManager
 {
+    public static final String EMPTY_PLAN_KEY = "";
     private final ActiveObjects ao;
 
     public PluginDataManager(ActiveObjects ao)
@@ -34,7 +36,11 @@ public class PluginDataManager
         final GitThingsConfig config = ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
             @Override
             public GitThingsConfig doInTransaction() {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key = ?", planKey);
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class,
+                        Query.select()
+                                .where("plan_key = ? OR plan_key = ?", planKey, EMPTY_PLAN_KEY)
+                                .order("plan_key DESC"));
+
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
 
                 defaultBotName(config);

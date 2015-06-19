@@ -6,7 +6,6 @@ import com.carolynvs.gitallthethings.webhook.PluginDataManager;
 
 public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
 {
-    private static final String GLOBAL = "";
     private final PluginDataManager pluginData;
     private String token;
     private String secret;
@@ -21,7 +20,7 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public String input()
             throws Exception
     {
-        GitThingsConfig config = pluginData.getConfig(GLOBAL);
+        GitThingsConfig config = pluginData.getConfig(PluginDataManager.EMPTY_PLAN_KEY);
         token = config.getToken();
         secret = config.getSecret();
         botName = config.getBotName();
@@ -32,7 +31,7 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public String save()
             throws Exception
     {
-        pluginData.setConfig(token, secret, botName, GLOBAL);
+        pluginData.setConfig(token, secret, botName, PluginDataManager.EMPTY_PLAN_KEY);
         return SUCCESS;
     }
 
