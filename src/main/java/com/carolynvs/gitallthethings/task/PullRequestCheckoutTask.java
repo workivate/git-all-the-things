@@ -56,6 +56,9 @@ public class PullRequestCheckoutTask implements TaskType
     private boolean checkoutPullRequest(PullRequestCheckoutTaskContext context)
             throws TaskException
     {
+        String refName = String.format("pull/%s/head", context.PullRequest.Number);
+        String branchName = String.format("pull/%s", context.PullRequest.Number);
+
         boolean shouldClone = validateExistingRepository(context);
         if(shouldClone)
         {
@@ -75,13 +78,27 @@ public class PullRequestCheckoutTask implements TaskType
                 return false;
         }
 
-        context.Logger.addBuildLogEntry(String.format("Fetching Pull Request #%s...", context.PullRequest.Number));
-        GitCommandOutput fetchResult = context.Git.execute("fetch", "--update-head-ok", "origin", String.format("pull/%1$s/head:pull/%1$s", context.PullRequest.Number));
+        if(branchExists(context.Git, branchName))
+        {
+            // checkout detached head so we can safely delete
+            context.Logger.addBuildLogEntry("Removing previous checkout of Pull Request");
+            GitCommandOutput detachResult = context.Git.execute("checkout", "--detach");
+            if(!detachResult.Succeeded)
+                return false;
+
+            // delete pull request branch
+            GitCommandOutput deleteResult = context.Git.execute("branch", "-D", String.format("pull/%s", context.PullRequest.Number));
+            if(!deleteResult.Succeeded)
+                return false;
+        }
+
+        context.Logger.addBuildLogEntry("Fetching Pull Request");
+        GitCommandOutput fetchResult = context.Git.execute("fetch", "origin", String.format("%s:%s", refName, branchName));
         if(!fetchResult.Succeeded)
             return false;
 
-        context.Logger.addBuildLogEntry(String.format("Checking out Pull Request #%s...", context.PullRequest.Number));
-        GitCommandOutput checkoutResult = context.Git.execute("checkout", "--force", String.format("pull/%s", context.PullRequest.Number));
+        context.Logger.addBuildLogEntry("Checking out Pull Request");
+        GitCommandOutput checkoutResult = context.Git.execute("checkout", "--force", branchName);
         if(!checkoutResult.Succeeded)
             return false;
 
@@ -90,6 +107,12 @@ public class PullRequestCheckoutTask implements TaskType
             return false;
 
         return true;
+    }
+
+    private boolean branchExists(final GitCommandRunner git, String branchName)
+    {
+        GitCommandOutput detachResult = git.execute("rev-parse", "--verify", branchName);
+        return detachResult.Succeeded;
     }
 
     private void prepDirectoryForClone(PullRequestCheckoutTaskContext context) throws TaskException {
