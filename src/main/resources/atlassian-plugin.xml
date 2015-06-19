@@ -5,10 +5,15 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
+        <param name="configure.url">/admin/configureGitAllTheThings.action</param>
     </plugin-info>
 
-    <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="i18n"/>
+
+    <ao key="ao-module">
+        <description>Git All The Things! plugin configuration</description>
+        <entity>com.carolynvs.gitallthethings.admin.GitThingsConfig</entity>
+    </ao>
 
     <rest name="GitHub WebHook" key="com.carolynvs.gitallthethings.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
@@ -34,6 +39,27 @@
         <description>Report the build status of a pull request</description>
     </buildProcessorServer>
 
+    <web-item key="configureGitAllTheThingsLink" name="Git All The Things Plugin" section="system.admin/plugins" weight="200">
+        <label key="gitthings.admin.link"/>
+        <link linkId="configureGitAllTheThings">/admin/editGitAllTheThings.action</link>
+    </web-item>
+
+    <xwork key="configureGitAllTheThingsAction" name="Git All The Things Plugin">
+        <package name="com.carolynvs" extends="admin" namespace="/admin">
+            <action name="editGitAllTheThings" class="com.carolynvs.gitallthethings.admin.ConfigureGitAllTheThingsAction" method="input">
+                <result name="input" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
+                <result name="error" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
+            </action>
+
+            <action name="saveGitAllTheThings" class="com.carolynvs.gitallthethings.admin.ConfigureGitAllTheThingsAction">
+                <result name="input" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
+                <result name="error" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
+                <result name="success" type="redirect">/admin/editGitAllTheThings.action?saved=true</result>
+            </action>
+        </package>
+    </xwork>
+
+    <component-import key="ao" name="Active Objects service" interface="com.atlassian.activeobjects.external.ActiveObjects" />
     <component-import key="CapabilityContext" interface="com.atlassian.bamboo.v2.build.agent.capability.CapabilityContext" />
     <component-import key="AdministrationConfigurationService" interface="com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService" />
     <component-import key="PlanExecutionManager" interface="com.atlassian.bamboo.plan.PlanExecutionManager" />
