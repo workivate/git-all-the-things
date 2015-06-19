@@ -5,7 +5,7 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
         <param name="plugin-icon">images/pluginIcon.png</param>
         <param name="plugin-logo">images/pluginLogo.png</param>
-        <param name="configure.url">/admin/configureGitAllTheThings.action</param>
+        <param name="configure.url">/admin/editGitAllTheThings.action</param>
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="i18n"/>
