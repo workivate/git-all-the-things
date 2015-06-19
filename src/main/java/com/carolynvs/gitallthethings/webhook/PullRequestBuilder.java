@@ -31,7 +31,7 @@ public class PullRequestBuilder
         User triggerUser = pluginData.getAssociatedUser(planKey, pullRequestEvent);
         String buildResultUrl = planTrigger.execute(PlanKeys.getPlanKey(planKey), triggerUser, variables);
 
-        String token = pluginData.getOAuthToken(planKey);
+        String token = pluginData.getConfig(planKey).getToken();
         GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest(GitHubCommitState.Pending, "The build is running", buildResultUrl);
 
         github.setPullRequestStatus(token, pullRequestEvent.PullRequest, statusRequest);

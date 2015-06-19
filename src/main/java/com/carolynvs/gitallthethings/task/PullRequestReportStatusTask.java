@@ -1,6 +1,5 @@
 package com.carolynvs.gitallthethings.task;
 
-import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.build.BuildLoggerManager;
 import com.atlassian.bamboo.build.CustomBuildProcessorServer;
@@ -12,19 +11,17 @@ import com.carolynvs.gitallthethings.PullRequestBuildContext;
 import com.carolynvs.gitallthethings.webhook.*;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
+
 public class PullRequestReportStatusTask implements TaskType, CustomBuildProcessorServer
 {
-    private final PluginDataManager pluginData;
-    private final BambooLinkBuilder bambooLinkBuilder;
     private final GitHubCommunicator github;
     private final BuildLoggerManager buildLoggerManager;
     private BuildContext finalBuildContext;
 
-    public PullRequestReportStatusTask(AdministrationConfigurationService administrationConfigurationService, BuildLoggerManager buildLoggerManager, ActiveObjects ao)
+    public PullRequestReportStatusTask(BuildLoggerManager buildLoggerManager)
     {
         this.buildLoggerManager = buildLoggerManager;
-        this.pluginData = new PluginDataManager(ao);
-        this.bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
         this.github = new GitHubCommunicator();
     }
 
@@ -49,16 +46,17 @@ public class PullRequestReportStatusTask implements TaskType, CustomBuildProcess
     public BuildContext call()
             throws Exception
     {
-        if(!shouldReportPullRequestStatus())
+        TaskDefinition taskDefinition = getTaskDefinitionFromBuild();
+        if(taskDefinition == null)
             return finalBuildContext;
 
-        String planKey = finalBuildContext.getPlanKey();
         BuildState buildState = finalBuildContext.getBuildResult().getBuildState();
         PullRequestBuildContext pullRequestBuildContext = new PullRequestBuildContext();
         BuildLogger logger = buildLoggerManager.getLogger(finalBuildContext.getResultKey());
 
-        String token = pluginData.getOAuthToken(planKey);
-        String buildResultUrl = bambooLinkBuilder.getBuildUrl(finalBuildContext.getBuildResultKey());
+        final Map<String, String> taskData = finalBuildContext.getRuntimeTaskContext().getRuntimeContextForTask(taskDefinition);
+        String token = taskData.get(PullRequestReportStatusTaskDataProvider.TOKEN_KEY);
+        String buildResultUrl = taskData.get(PullRequestReportStatusTaskDataProvider.BUILD_RESULT_URL_KEY);
         String status = buildState == BuildState.SUCCESS ? GitHubCommitState.Success : GitHubCommitState.Failure;
         String description = buildState == BuildState.SUCCESS ? "The build succeeded." : "The build failed.";
         GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest(status, description, buildResultUrl);
@@ -81,13 +79,13 @@ public class PullRequestReportStatusTask implements TaskType, CustomBuildProcess
         return finalBuildContext;
     }
 
-    private boolean shouldReportPullRequestStatus()
+    private TaskDefinition getTaskDefinitionFromBuild()
     {
         for (TaskDefinition taskDefinition : finalBuildContext.getBuildDefinition().getTaskDefinitions())
         {
             if(taskDefinition.getPluginKey().equals("com.carolynvs.gitallthethings:PullRequestReportStatusTask"))
-                return true;
+                return taskDefinition;
         }
-        return false;
+        return null;
     }
 }

@@ -40,7 +40,7 @@ public class PullRequestTriggerResource
         if(pullRequestEvent == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
 
-        String webHookSecret = pluginData.getWebHookSecret(planKey);
+        String webHookSecret = pluginData.getConfig(planKey).getSecret();
         if(!github.validWebHook(webHookSecret, jsonBody, signature))
             return Response.status(Response.Status.UNAUTHORIZED).build();
 
