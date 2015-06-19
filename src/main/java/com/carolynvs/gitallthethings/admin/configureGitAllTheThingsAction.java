@@ -2,33 +2,24 @@ package com.carolynvs.gitallthethings.admin;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.configuration.GlobalAdminAction;
-import com.atlassian.sal.api.transaction.TransactionCallback;
+import com.carolynvs.gitallthethings.webhook.PluginDataManager;
 
 public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
 {
-    private final ActiveObjects ao;
-
+    private static final String GLOBAL = "";
+    private final PluginDataManager pluginData;
     private String token;
 
     public ConfigureGitAllTheThingsAction(ActiveObjects ao)
     {
-        this.ao = ao;
+        this.pluginData = new PluginDataManager(ao);
     }
 
     @Override
     public String input()
             throws Exception
     {
-        ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
-            @Override
-            public GitThingsConfig doInTransaction()
-            {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key is NULL");
-                GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
-                token = config.getToken();
-                return null;
-            }
-        });
+        token = pluginData.getOAuthToken(GLOBAL);
 
         return INPUT;
     }
@@ -36,17 +27,7 @@ public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
     public String save()
             throws Exception
     {
-        ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
-            @Override
-            public GitThingsConfig doInTransaction() {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key is NULL");
-                GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
-
-                config.setToken(token);
-                config.save();
-                return config;
-            }
-        });
+        pluginData.setOAuthToken(token, GLOBAL);
         return SUCCESS;
     }
 

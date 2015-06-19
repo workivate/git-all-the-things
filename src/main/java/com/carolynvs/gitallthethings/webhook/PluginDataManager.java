@@ -1,19 +1,52 @@
 package com.carolynvs.gitallthethings.webhook;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
+import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.user.User;
+import com.carolynvs.gitallthethings.admin.GitThingsConfig;
 
 public class PluginDataManager
 {
+    private final ActiveObjects ao;
+
+    public PluginDataManager(ActiveObjects ao)
+    {
+        this.ao = ao;
+    }
     public String getWebHookSecret(String planKey)
     {
         // todo: store this either per repo or for all of bamboo
         return "6ba8caf8dc2b3951e8a4a278aea23a5e97bd6d59";
     }
 
-    public String getOAuthToken(String planKey)
+    public String getOAuthToken(final String planKey)
     {
-        // todo: store this either per repo or for all of bamboo
-        return "8f55c7e40a78f0cd5f5ec9364279968d8d46c2fb";
+        final GitThingsConfig config = ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
+            @Override
+            public GitThingsConfig doInTransaction() {
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key = ?", planKey);
+                GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
+                return config;
+            }
+        });
+
+        return config.getToken();
+    }
+
+    public void setOAuthToken(final String token, final String planKey)
+    {
+        ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
+            @Override
+            public GitThingsConfig doInTransaction() {
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key = ?", planKey);
+                GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
+
+                config.setToken(token);
+                config.setPlanKey(planKey);
+                config.save();
+                return config;
+            }
+        });
     }
 
     public User getAssociatedUser(String planKey, PullRequestEvent pullRequestEvent)

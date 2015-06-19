@@ -10,8 +10,8 @@ import net.java.ao.schema.Table;
 public interface GitThingsConfig extends Entity
 {
     public String getPlanKey();
-    public void setPlanKey();
-    
+    public void setPlanKey(String planKey);
+
     public String getToken();
-    public void setToken(String abc);
+    public void setToken(String token);
 }

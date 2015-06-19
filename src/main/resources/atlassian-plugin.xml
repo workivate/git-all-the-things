@@ -48,7 +48,6 @@
         <package name="com.carolynvs" extends="admin" namespace="/admin">
             <action name="editGitAllTheThings" class="com.carolynvs.gitallthethings.admin.ConfigureGitAllTheThingsAction" method="input">
                 <result name="input" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
-                <result name="error" type="freemarker">/admin/configureGitAllTheThings.ftl</result>
             </action>
 
             <action name="saveGitAllTheThings" class="com.carolynvs.gitallthethings.admin.ConfigureGitAllTheThingsAction" method="save">

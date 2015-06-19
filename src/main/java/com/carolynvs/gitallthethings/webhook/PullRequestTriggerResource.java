@@ -1,5 +1,6 @@
 package com.carolynvs.gitallthethings.webhook;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.plan.PlanExecutionManager;
 import com.atlassian.bamboo.plan.PlanManager;
@@ -20,10 +21,10 @@ public class PullRequestTriggerResource
     private final GitHubCommunicator github;
     private final PluginDataManager pluginData;
 
-    public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService)
+    public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService, ActiveObjects ao)
     {
         this.github = new GitHubCommunicator();
-        this.pluginData = new PluginDataManager();
+        this.pluginData = new PluginDataManager(ao);
         BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
         this.pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github, bambooLinkBuilder);
     }

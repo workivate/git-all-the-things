@@ -1,5 +1,6 @@
 package com.carolynvs.gitallthethings.task;
 
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.build.BuildLoggerManager;
 import com.atlassian.bamboo.build.CustomBuildProcessorServer;
@@ -19,10 +20,10 @@ public class PullRequestReportStatusTask implements TaskType, CustomBuildProcess
     private final BuildLoggerManager buildLoggerManager;
     private BuildContext finalBuildContext;
 
-    public PullRequestReportStatusTask(AdministrationConfigurationService administrationConfigurationService, BuildLoggerManager buildLoggerManager)
+    public PullRequestReportStatusTask(AdministrationConfigurationService administrationConfigurationService, BuildLoggerManager buildLoggerManager, ActiveObjects ao)
     {
         this.buildLoggerManager = buildLoggerManager;
-        this.pluginData = new PluginDataManager();
+        this.pluginData = new PluginDataManager(ao);
         this.bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
         this.github = new GitHubCommunicator();
     }
