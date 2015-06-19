@@ -4,8 +4,12 @@ import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.user.User;
 import com.carolynvs.gitallthethings.admin.GitThingsConfig;
+import net.java.ao.EntityManager;
 import net.java.ao.Query;
+import net.java.ao.RawEntity;
 import org.apache.commons.lang.StringUtils;
+
+import java.beans.PropertyChangeListener;
 
 public class PluginDataManager
 {
@@ -15,20 +19,6 @@ public class PluginDataManager
     public PluginDataManager(ActiveObjects ao)
     {
         this.ao = ao;
-    }
-
-    public String getWebHookSecret(final String planKey)
-    {
-        GitThingsConfig config = getConfig(planKey);
-
-        return config.getSecret();
-    }
-
-    public String getOAuthToken(final String planKey)
-    {
-        GitThingsConfig config = getConfig(planKey);
-
-        return config.getToken();
     }
 
     public GitThingsConfig getConfig(final String planKey)
@@ -41,7 +31,7 @@ public class PluginDataManager
                                 .where("plan_key = ? OR plan_key = ?", planKey, EMPTY_PLAN_KEY)
                                 .order("plan_key DESC"));
 
-                GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
+                GitThingsConfig config = rows.length > 0 ? rows[0] : new DefaultGitThingsConfig();
 
                 defaultBotName(config);
                 return config;
@@ -103,5 +93,85 @@ public class PluginDataManager
                 return userName;
             }
         };
+    }
+
+    private class DefaultGitThingsConfig implements GitThingsConfig
+    {
+
+        @Override
+        public String getPlanKey() {
+            return null;
+        }
+
+        @Override
+        public void setPlanKey(String planKey) {
+
+        }
+
+        @Override
+        public String getToken() {
+            return null;
+        }
+
+        @Override
+        public void setToken(String token) {
+
+        }
+
+        @Override
+        public String getSecret() {
+            return null;
+        }
+
+        @Override
+        public void setSecret(String secret) {
+
+        }
+
+        @Override
+        public String getBotName() {
+            return null;
+        }
+
+        @Override
+        public void setBotName(String botName) {
+
+        }
+
+        @Override
+        public int getID() {
+            return 0;
+        }
+
+        @Override
+        public void init() {
+
+        }
+
+        @Override
+        public void save() {
+
+        }
+
+        @Override
+        public EntityManager getEntityManager() {
+            return null;
+        }
+
+        @Override
+        public <X extends RawEntity<Integer>> Class<X> getEntityType() {
+            return null;
+        }
+
+
+        @Override
+        public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+
+        }
+
+        @Override
+        public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+
+        }
     }
 }
