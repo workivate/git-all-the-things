@@ -39,7 +39,8 @@ public class GitHubCommunicator
     }
 
     public void setPullRequestStatus(String token, PullRequest pullRequest, GitHubSetCommitStatusRequest statusRequest)
-            throws Exception
+            throws SetPullRequestStatusException
+
     {
         try
         {
@@ -60,7 +61,8 @@ public class GitHubCommunicator
         }
         catch(Exception ex)
         {
-            throw new Exception("An error occurred setting the pull request status.", ex);
+            throw new SetPullRequestStatusException("An error occurred setting the pull request status.", ex);
         }
     }
 }
+

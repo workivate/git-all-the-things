@@ -9,6 +9,9 @@ public class PullRequest
     @JsonProperty("number")
     public int Number;
 
+    @JsonProperty("title")
+    public String Title;
+
     @JsonProperty("user")
     public GitHubUser Owner;
 

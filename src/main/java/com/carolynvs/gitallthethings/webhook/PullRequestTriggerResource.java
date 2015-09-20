@@ -2,8 +2,12 @@ package com.carolynvs.gitallthethings.webhook;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
-import com.atlassian.bamboo.plan.PlanExecutionManager;
-import com.atlassian.bamboo.plan.PlanManager;
+import com.atlassian.bamboo.build.*;
+import com.atlassian.bamboo.build.creation.*;
+import com.atlassian.bamboo.plan.*;
+import com.atlassian.bamboo.plan.branch.*;
+import com.atlassian.bamboo.plan.cache.*;
+import com.atlassian.bamboo.variable.*;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -21,12 +25,16 @@ public class PullRequestTriggerResource
     private final GitHubCommunicator github;
     private final PluginDataManager pluginData;
 
-    public PullRequestTriggerResource(PlanManager planManager, PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService, ActiveObjects ao)
+    public PullRequestTriggerResource(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager, PlanManager planManager,
+                                      VariableConfigurationService variableConfigurationService,
+                                      PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService,
+                                      ActiveObjects ao)
     {
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
         BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
-        this.pullRequestBuilder = new PullRequestBuilder(planManager, planExecutionManager, pluginData, github, bambooLinkBuilder);
+        this.pullRequestBuilder = new PullRequestBuilder(branchDetectionService, cachedPlanManager, planManager, variableConfigurationService, planExecutionManager, pluginData, github, bambooLinkBuilder);
+
     }
 
     @POST
@@ -49,9 +57,16 @@ public class PullRequestTriggerResource
 
         try {
             pullRequestBuilder.build(planKey, pullRequestEvent);
-        } catch (Exception ex) {
-            return Response.serverError().entity(new ServerError(ex).toJson()).build();
+        } catch (PlanCreationDeniedException e) {
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You do not have permission to create a branch plan for the specified pull request").build();
+        } catch(PlanCreationException e) {
+            return Response.status(Response.Status.FORBIDDEN)
+                    .entity("You do not have permission to create a branch plan for the specified pull request").build();
+        } catch (Exception e) {
+            return Response.serverError().entity(new ServerError(e).toJson()).build();
         }
+
 
         return Response.status(Response.Status.OK).build();
     }
