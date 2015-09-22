@@ -1,4 +1,4 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.pullrequests;
 
 public class SetPullRequestStatusException extends Exception
 {

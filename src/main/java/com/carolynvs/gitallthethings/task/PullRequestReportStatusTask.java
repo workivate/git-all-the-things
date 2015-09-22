@@ -1,14 +1,13 @@
 package com.carolynvs.gitallthethings.task;
 
-import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.build.BuildLoggerManager;
 import com.atlassian.bamboo.build.CustomBuildProcessorServer;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.builder.BuildState;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.BuildContext;
-import com.carolynvs.gitallthethings.PullRequestBuildContext;
-import com.carolynvs.gitallthethings.webhook.*;
+import com.carolynvs.gitallthethings.pullrequests.PullRequestBuildContext;
+import com.carolynvs.gitallthethings.github.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -61,7 +60,7 @@ public class PullRequestReportStatusTask implements TaskType, CustomBuildProcess
         String description = buildState == BuildState.SUCCESS ? "The build succeeded." : "The build failed.";
         GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest(status, description, buildResultUrl);
 
-        PullRequest pullRequest = pullRequestBuildContext.getPullRequest(finalBuildContext, logger);
+        GitHubPullRequest pullRequest = pullRequestBuildContext.getPullRequest(finalBuildContext, logger);
         if(pullRequest == null)
         {
             finalBuildContext.getBuildResult().setBuildReturnCode(1);

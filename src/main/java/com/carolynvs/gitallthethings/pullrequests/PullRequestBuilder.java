@@ -1,4 +1,4 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.pullrequests;
 
 import com.atlassian.bamboo.build.*;
 import com.atlassian.bamboo.plan.*;
@@ -7,8 +7,7 @@ import com.atlassian.bamboo.plan.cache.*;
 import com.atlassian.bamboo.variable.*;
 import com.atlassian.user.*;
 import com.carolynvs.gitallthethings.*;
-
-import java.util.*;
+import com.carolynvs.gitallthethings.github.*;
 
 public class PullRequestBuilder
 {
@@ -26,7 +25,7 @@ public class PullRequestBuilder
         this.planTrigger = new PlanTrigger(branchDetectionService, cachedPlanManager, planManager, variableConfigurationService, planExecutionManager, bambooLinkBuilder);
     }
 
-    public void build(String planKey, PullRequestEvent pullRequestEvent)
+    public void build(String planKey, GitHubPullRequestEvent pullRequestEvent)
             throws PlanCreationDeniedException, SetPullRequestStatusException, Exception
 
     {
@@ -37,7 +36,7 @@ public class PullRequestBuilder
         setPullRequestStatusToPending(planKey, pullRequestEvent, buildResultUrl);
     }
 
-    private void setPullRequestStatusToPending(String planKey, PullRequestEvent pullRequestEvent, String buildResultUrl)
+    private void setPullRequestStatusToPending(String planKey, GitHubPullRequestEvent pullRequestEvent, String buildResultUrl)
             throws SetPullRequestStatusException
 
     {
@@ -47,14 +46,14 @@ public class PullRequestBuilder
         github.setPullRequestStatus(token, pullRequestEvent.PullRequest, statusRequest);
     }
 
-    private String triggerPlan(PlanKey planKey, PullRequestEvent pullRequestEvent)
+    private String triggerPlan(PlanKey planKey, GitHubPullRequestEvent pullRequestEvent)
     {
         User triggerUser = pluginData.getAssociatedUser(planKey.toString(), pullRequestEvent);
 
         return planTrigger.execute(planKey, triggerUser);
     }
 
-    public PlanKey ensureBranchPlanExists(PlanKey planKey, PullRequest pullRequest)
+    public PlanKey ensureBranchPlanExists(PlanKey planKey, GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException, Exception
     {
         return planTrigger.createPullRequestBranchPlan(planKey, pullRequest);

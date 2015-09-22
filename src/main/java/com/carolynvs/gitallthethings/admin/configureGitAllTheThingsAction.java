@@ -2,7 +2,7 @@ package com.carolynvs.gitallthethings.admin;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.configuration.GlobalAdminAction;
-import com.carolynvs.gitallthethings.webhook.PluginDataManager;
+import com.carolynvs.gitallthethings.PluginDataManager;
 
 public class ConfigureGitAllTheThingsAction extends GlobalAdminAction
 {

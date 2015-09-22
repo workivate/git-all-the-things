@@ -8,8 +8,8 @@ import com.atlassian.bamboo.task.runtime.RuntimeTaskDefinition;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.atlassian.bamboo.v2.build.CommonContext;
 import com.carolynvs.gitallthethings.admin.GitThingsConfig;
-import com.carolynvs.gitallthethings.webhook.BambooLinkBuilder;
-import com.carolynvs.gitallthethings.webhook.PluginDataManager;
+import com.carolynvs.gitallthethings.BambooLinkBuilder;
+import com.carolynvs.gitallthethings.PluginDataManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

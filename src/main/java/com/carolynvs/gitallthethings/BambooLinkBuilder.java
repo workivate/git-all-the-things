@@ -1,4 +1,4 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings;
 
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 

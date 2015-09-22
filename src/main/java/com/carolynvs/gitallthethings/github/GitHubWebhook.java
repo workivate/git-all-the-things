@@ -1,14 +1,15 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.github;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.build.*;
-import com.atlassian.bamboo.build.creation.*;
 import com.atlassian.bamboo.plan.*;
 import com.atlassian.bamboo.plan.branch.*;
 import com.atlassian.bamboo.plan.cache.*;
 import com.atlassian.bamboo.variable.*;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
+import com.carolynvs.gitallthethings.*;
+import com.carolynvs.gitallthethings.pullrequests.*;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.*;
@@ -19,16 +20,16 @@ import java.io.IOException;
 @AnonymousAllowed
 @Path("/pullrequest-trigger")
 @Consumes({MediaType.APPLICATION_JSON})
-public class PullRequestTriggerResource
+public class GitHubWebhook
 {
     private final PullRequestBuilder pullRequestBuilder;
     private final GitHubCommunicator github;
     private final PluginDataManager pluginData;
 
-    public PullRequestTriggerResource(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager, PlanManager planManager,
-                                      VariableConfigurationService variableConfigurationService,
-                                      PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService,
-                                      ActiveObjects ao)
+    public GitHubWebhook(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager, PlanManager planManager,
+                         VariableConfigurationService variableConfigurationService,
+                         PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService,
+                         ActiveObjects ao)
     {
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
@@ -44,7 +45,7 @@ public class PullRequestTriggerResource
         if(isPing(event))
             return Response.ok().build();
 
-        PullRequestEvent pullRequestEvent = parsePullRequestEvent(jsonBody);
+        GitHubPullRequestEvent pullRequestEvent = parsePullRequestEvent(jsonBody);
         if(pullRequestEvent == null)
             return Response.status(Response.Status.BAD_REQUEST).build();
 
@@ -76,16 +77,16 @@ public class PullRequestTriggerResource
         return event.equals("ping");
     }
 
-    private boolean isPullRequestContentChanged(PullRequestEvent pullRequestEvent)
+    private boolean isPullRequestContentChanged(GitHubPullRequestEvent pullRequestEvent)
     {
         return PullRequestAction.OPENED.equals(pullRequestEvent.Action) || PullRequestAction.SYNCHRONIZE.equals(pullRequestEvent.Action);
     }
 
-    private PullRequestEvent parsePullRequestEvent(String jsonBody)
+    private GitHubPullRequestEvent parsePullRequestEvent(String jsonBody)
     {
         ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(jsonBody, PullRequestEvent.class);
+            return mapper.readValue(jsonBody, GitHubPullRequestEvent.class);
         }
         catch (IOException e) {
             return null;

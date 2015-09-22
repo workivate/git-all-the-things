@@ -7,8 +7,8 @@ import com.atlassian.bamboo.plugins.git.GitCapabilityTypeModule;
 import com.atlassian.bamboo.task.*;
 import com.atlassian.bamboo.v2.build.CurrentResult;
 import com.atlassian.bamboo.v2.build.agent.capability.CapabilityContext;
-import com.carolynvs.gitallthethings.PullRequestBuildContext;
-import com.carolynvs.gitallthethings.webhook.PullRequest;
+import com.carolynvs.gitallthethings.pullrequests.PullRequestBuildContext;
+import com.carolynvs.gitallthethings.github.GitHubPullRequest;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -165,7 +165,7 @@ public class PullRequestCheckoutTask implements TaskType
     private PullRequestCheckoutTaskContext readConfiguration(TaskContext taskContext, BuildLogger logger)
     {
         PullRequestBuildContext pullRequestBuildContext = new PullRequestBuildContext();
-        PullRequest pullRequest = pullRequestBuildContext.getPullRequest(taskContext.getBuildContext(), logger);
+        GitHubPullRequest pullRequest = pullRequestBuildContext.getPullRequest(taskContext.getBuildContext(), logger);
         if(pullRequest == null)
             return null;
 
@@ -188,7 +188,7 @@ public class PullRequestCheckoutTask implements TaskType
 
     private class PullRequestCheckoutTaskContext
     {
-        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, PullRequest pullRequest)
+        public PullRequestCheckoutTaskContext(BuildLogger logger, File repository, String remote, String revision, GitHubPullRequest pullRequest)
         {
             this.Logger = logger;
             this.Repository = repository;
@@ -206,7 +206,7 @@ public class PullRequestCheckoutTask implements TaskType
         public final String Remote;
         public final String Revision;
         public final boolean ShouldClean;
-        public final PullRequest PullRequest;
+        public final GitHubPullRequest PullRequest;
     }
 }
 

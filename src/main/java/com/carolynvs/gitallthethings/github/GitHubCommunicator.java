@@ -1,5 +1,6 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.github;
 
+import com.carolynvs.gitallthethings.pullrequests.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -38,7 +39,7 @@ public class GitHubCommunicator
         }
     }
 
-    public void setPullRequestStatus(String token, PullRequest pullRequest, GitHubSetCommitStatusRequest statusRequest)
+    public void setPullRequestStatus(String token, GitHubPullRequest pullRequest, GitHubSetCommitStatusRequest statusRequest)
             throws SetPullRequestStatusException
 
     {

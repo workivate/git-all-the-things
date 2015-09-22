@@ -1,6 +1,5 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.pullrequests;
 
-import com.atlassian.bamboo.applinks.*;
 import com.atlassian.bamboo.build.*;
 import com.atlassian.bamboo.build.creation.*;
 import com.atlassian.bamboo.plan.*;
@@ -11,6 +10,7 @@ import com.atlassian.bamboo.utils.*;
 import com.atlassian.bamboo.variable.*;
 import com.atlassian.user.*;
 import com.carolynvs.gitallthethings.*;
+import com.carolynvs.gitallthethings.github.*;
 import org.jetbrains.annotations.*;
 
 import java.util.*;
@@ -45,7 +45,7 @@ public class PlanTrigger
         return bambooLinkBuilder.getBuildUrl(result.getPlanResultKey().toString());
     }
 
-    public PlanKey createPullRequestBranchPlan(PlanKey masterPlanKey, PullRequest pullRequest)
+    public PlanKey createPullRequestBranchPlan(PlanKey masterPlanKey, GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException, Exception
     {
         ImmutableChain masterPlan = cachedPlanManager.getMasterPlan(masterPlanKey);
@@ -57,7 +57,7 @@ public class PlanTrigger
         return createBranchPlanWithImpersonation(masterPlan, pullRequest);
     }
 
-    private PlanKey createBranchPlanWithImpersonation(final ImmutableChain masterPlan, final PullRequest pullRequest)
+    private PlanKey createBranchPlanWithImpersonation(final ImmutableChain masterPlan, final GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException, Exception
     {
         final BambooRunnables.BambooRunnableFromCallable<PlanKey> runnable = BambooRunnables.asBambooRunnable(new Callable<PlanKey>() {
@@ -70,7 +70,7 @@ public class PlanTrigger
         return runnable.get();
     }
 
-    private PlanKey createBranchPlan(final ImmutableChain masterPlan, final PullRequest pullRequest)
+    private PlanKey createBranchPlan(final ImmutableChain masterPlan, final GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException
     {
         String branchPlanName = String.format("Pull Request %s - %s", pullRequest.Number, pullRequest.Title);
@@ -80,7 +80,7 @@ public class PlanTrigger
         return branchPlanKey;
     }
 
-    private void setPullRequestVariables(PlanKey planKey, PullRequest pullRequest)
+    private void setPullRequestVariables(PlanKey planKey, GitHubPullRequest pullRequest)
     {
         // Set the variables on the plan so that we can kick a build without custom variables
         Plan plan = planManager.getPlanByKey(planKey);

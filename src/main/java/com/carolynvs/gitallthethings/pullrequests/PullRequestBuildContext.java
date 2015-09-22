@@ -1,9 +1,9 @@
-package com.carolynvs.gitallthethings;
+package com.carolynvs.gitallthethings.pullrequests;
 
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.atlassian.bamboo.variable.VariableDefinitionContext;
-import com.carolynvs.gitallthethings.webhook.PullRequest;
+import com.carolynvs.gitallthethings.github.GitHubPullRequest;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;
@@ -14,7 +14,7 @@ public class PullRequestBuildContext
     public static final String PULLREQUEST_NUMBER_VAR = "pullrequest.number";
     public static final String PULLREQUEST_STATUS_URL_VAR = "pullrequest.statusurl";
 
-    public PullRequest getPullRequest(BuildContext buildContext, BuildLogger logger)
+    public GitHubPullRequest getPullRequest(BuildContext buildContext, BuildLogger logger)
     {
         Map<String, VariableDefinitionContext> buildVars = buildContext.getVariableContext().getEffectiveVariables();
 
@@ -38,14 +38,14 @@ public class PullRequestBuildContext
             return null;
         }
 
-        PullRequest pullRequest = new PullRequest();
+        GitHubPullRequest pullRequest = new GitHubPullRequest();
         pullRequest.Number = Integer.parseInt(number);
         pullRequest.StatusUrl = statusUrl;
 
         return pullRequest;
     }
 
-    public Map<String, String> createPullRequestVariables(PullRequest pullRequest)
+    public Map<String, String> createPullRequestVariables(GitHubPullRequest pullRequest)
     {
         Map<String, String> variables = new HashMap<String, String>();
         variables.put(PULLREQUEST_NUMBER_VAR, Integer.toString(pullRequest.Number));

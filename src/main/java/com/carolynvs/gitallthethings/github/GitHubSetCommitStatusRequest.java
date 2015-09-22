@@ -1,4 +1,4 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.github;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 

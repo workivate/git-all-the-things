@@ -1,9 +1,10 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.user.User;
 import com.carolynvs.gitallthethings.admin.GitThingsConfig;
+import com.carolynvs.gitallthethings.github.*;
 import net.java.ao.EntityManager;
 import net.java.ao.Query;
 import net.java.ao.RawEntity;
@@ -68,7 +69,7 @@ public class PluginDataManager
         });
     }
 
-    public User getAssociatedUser(String planKey, PullRequestEvent pullRequestEvent)
+    public User getAssociatedUser(String planKey, GitHubPullRequestEvent pullRequestEvent)
     {
         GitThingsConfig config = getConfig(planKey);
 

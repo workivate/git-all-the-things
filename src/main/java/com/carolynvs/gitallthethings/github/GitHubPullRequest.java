@@ -1,10 +1,9 @@
-package com.carolynvs.gitallthethings.webhook;
+package com.carolynvs.gitallthethings.github;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PullRequest
+public class GitHubPullRequest
 {
     @JsonProperty("number")
     public int Number;

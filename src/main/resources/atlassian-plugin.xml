@@ -15,7 +15,7 @@
         <entity>com.carolynvs.gitallthethings.admin.GitThingsConfig</entity>
     </ao>
 
-    <rest name="GitHub WebHook" key="com.carolynvs.gitallthethings.webhook.PullRequestTriggerResource" path="/github-webhook" version="1.0">
+    <rest name="GitHub WebHook" key="com.carolynvs.gitallthethings.github.GitHubWebhook" path="/github-webhook" version="1.0">
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
 
