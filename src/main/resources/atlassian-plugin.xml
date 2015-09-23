@@ -31,7 +31,7 @@
     <taskType key="GitCheckoutTask" name="Git Checkout" class="com.carolynvs.gitallthethings.task.GitCheckoutTask">
         <description>Checkout a branch from a git repository</description>
         <category name="repository"/>
-        <resource type="download" name="icon" location="images/pullrequest.png"/>
+        <resource type="download" name="icon" location="images/pluginLogo.png"/>
         <configuration class="com.carolynvs.gitallthethings.task.GitCheckoutTaskConfigurator"/>
         <resource type="freemarker" name="edit" location="task/edit-checkout.ftl"/>
         <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>

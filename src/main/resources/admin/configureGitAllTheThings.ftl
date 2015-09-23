@@ -3,11 +3,11 @@
 
 <html>
 <head>
-    <title>Configure the Git All The Things! Plugin</title>
+    <title>Git All The Things!</title>
     <meta name="decorator" content="adminpage">
 </head>
 <body>
-<h1>Configure the Git All The Things! Plugin</h1>
+<h1>Configure Git All The Things!</h1>
 
 [@s.form action="saveGitAllTheThings" namespace="/admin" submitLabelKey="global.buttons.update" ]
 
