@@ -20,12 +20,21 @@
     </rest>
 
     <taskType key="PullRequestCheckoutTask" name="Pull Request Checkout" class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTask">
-        <description>Checkout a pull request from a repository</description>
+        <description>Checkout a pull request from a git repository</description>
         <category name="repository"/>
         <resource type="download" name="icon" location="images/pullrequest.png"/>
         <configuration class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTaskConfigurator"/>
-        <resource type="freemarker" name="edit" location="task/edit-pullrequest-checkout.ftl"/>
-        <resource type="freemarker" name="view" location="task/view-pullrequest-checkout.ftl"/>
+        <resource type="freemarker" name="edit" location="task/edit-checkout.ftl"/>
+        <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>
+    </taskType>
+
+    <taskType key="GitCheckoutTask" name="Git Checkout" class="com.carolynvs.gitallthethings.task.GitCheckoutTask">
+        <description>Checkout a branch from a git repository</description>
+        <category name="repository"/>
+        <resource type="download" name="icon" location="images/pullrequest.png"/>
+        <configuration class="com.carolynvs.gitallthethings.task.GitCheckoutTaskConfigurator"/>
+        <resource type="freemarker" name="edit" location="task/edit-checkout.ftl"/>
+        <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>
     </taskType>
 
     <taskType key="PullRequestReportStatusTask" name="Pull Request Report Status" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTask">
