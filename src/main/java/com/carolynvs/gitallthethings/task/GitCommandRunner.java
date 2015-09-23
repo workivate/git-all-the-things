@@ -1,15 +1,12 @@
 package com.carolynvs.gitallthethings.task;
 
-import com.atlassian.bamboo.build.logger.BuildLogger;
-import com.atlassian.bamboo.process.BambooProcessHandler;
-import com.atlassian.utils.process.ExternalProcess;
+import com.atlassian.bamboo.build.logger.*;
+import com.atlassian.bamboo.process.*;
+import com.atlassian.utils.process.*;
 import com.atlassian.utils.process.ExternalProcessBuilder;
-import com.atlassian.utils.process.StringOutputHandler;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class GitCommandRunner
 {
@@ -40,11 +37,23 @@ public class GitCommandRunner
 
         GitCommandOutput gitOutput = new GitCommandOutput(process.getHandler(), outputHandler);
         if(gitOutput.Succeeded)
-            buildLogger.addBuildLogEntry(gitOutput.Output);
+            logInfo(gitOutput.Output);
         else
-            buildLogger.addErrorLogEntry(gitOutput.Output);
+            logError(gitOutput.Output);
 
         return gitOutput;
+    }
+
+    private void logInfo(String message)
+    {
+        for(String line : message.split("\n"))
+            buildLogger.addBuildLogEntry(line);
+    }
+
+    private void logError(String message)
+    {
+        for(String line : message.split("\n"))
+            buildLogger.addErrorLogEntry(line);
     }
 }
 
