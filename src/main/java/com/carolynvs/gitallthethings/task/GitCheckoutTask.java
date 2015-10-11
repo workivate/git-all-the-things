@@ -161,7 +161,7 @@ public class GitCheckoutTask implements TaskType
     protected GitCheckoutTaskContext readConfiguration(TaskContext taskContext, BuildLogger logger)
     {
         ConfigurationMap taskConfig = taskContext.getConfigurationMap();
-        String repoPath =  taskConfig.get(PullRequestCheckoutTaskConfigurator.REPO_PATH);
+        String repoPath = taskConfig.get(PullRequestCheckoutTaskConfigurator.REPO_PATH);
         File buildDirectory = taskContext.getWorkingDirectory();
         File repo = new File(buildDirectory, repoPath);
 

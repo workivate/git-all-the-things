@@ -37,14 +37,7 @@
         <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>
     </taskType>
 
-    <taskType key="PullRequestReportStatusTask" name="Pull Request Report Status" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTask">
-        <description>Indicate that the status of the build should be reported when the build completes</description>
-        <category name="repository"/>
-        <runtimeTaskDataProvider class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTaskDataProvider"/>
-        <resource type="download" name="icon" location="images/pullrequest.png"/>
-    </taskType>
-
-    <buildProcessorServer key="PullRequestReportStatusProcessor" name="Pull Request Report Status Processor" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusTask">
+    <buildProcessorServer key="PullRequestReportStatusProcessor" name="Pull Request Report Status Processor" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusProcessor">
         <skipIfFailed>false</skipIfFailed>
         <description>Report the build status of a pull request</description>
     </buildProcessorServer>
