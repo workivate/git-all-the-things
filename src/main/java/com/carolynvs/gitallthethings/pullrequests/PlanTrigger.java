@@ -2,6 +2,7 @@ package com.carolynvs.gitallthethings.pullrequests;
 
 import com.atlassian.bamboo.build.*;
 import com.atlassian.bamboo.build.creation.*;
+import com.atlassian.bamboo.deletion.*;
 import com.atlassian.bamboo.plan.*;
 import com.atlassian.bamboo.plan.branch.*;
 import com.atlassian.bamboo.plan.cache.*;
@@ -22,17 +23,20 @@ public class PlanTrigger
     private final CachedPlanManager cachedPlanManager;
     private final PlanManager planManager;
     private final VariableConfigurationService variableConfigurationService;
+    private final DeletionService deletionService;
     private final PlanExecutionManager planExecutionManager;
     private final BambooLinkBuilder bambooLinkBuilder;
 
     public PlanTrigger(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager,
                        PlanManager planManager, VariableConfigurationService variableConfigurationService,
+                       DeletionService deletionService,
                        PlanExecutionManager planExecutionManager, BambooLinkBuilder bambooLinkBuilder)
     {
         this.branchDetectionService = branchDetectionService;
         this.cachedPlanManager = cachedPlanManager;
         this.planManager = planManager;
         this.variableConfigurationService = variableConfigurationService;
+        this.deletionService = deletionService;
         this.planExecutionManager = planExecutionManager;
         this.bambooLinkBuilder = bambooLinkBuilder;
     }
@@ -45,7 +49,18 @@ public class PlanTrigger
         return bambooLinkBuilder.getBuildUrl(result.getPlanResultKey().toString());
     }
 
-    public PlanKey createPullRequestBranchPlan(PlanKey masterPlanKey, GitHubPullRequest pullRequest)
+    public void removeBranchPlan(PlanKey masterPlanKey, GitHubPullRequest pullRequest)
+    {
+        ImmutableChain masterPlan = cachedPlanManager.getMasterPlan(masterPlanKey);
+
+        ImmutableChainBranch existingPlan = findBranchPlan(masterPlan, pullRequest.Number);
+        if(existingPlan == null)
+            return;
+
+        removeBranchPlan(existingPlan.getPlanKey());
+    }
+
+    public PlanKey findOrCreateBranchPlan(PlanKey masterPlanKey, GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException, Exception
     {
         ImmutableChain masterPlan = cachedPlanManager.getMasterPlan(masterPlanKey);
@@ -78,6 +93,11 @@ public class PlanTrigger
         PlanKey branchPlanKey = branchDetectionService.createChainBranch(masterPlan, branchPlanName, null, null, PlanCreationService.EnablePlan.ENABLED, true);
         setPullRequestVariables(branchPlanKey, pullRequest);
         return branchPlanKey;
+    }
+
+    private void removeBranchPlan(PlanKey planKey)
+    {
+        deletionService.deletePlans(Arrays.asList(planKey.toString()));
     }
 
     private void setPullRequestVariables(PlanKey planKey, GitHubPullRequest pullRequest)

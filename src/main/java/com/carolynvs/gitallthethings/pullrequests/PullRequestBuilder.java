@@ -1,6 +1,7 @@
 package com.carolynvs.gitallthethings.pullrequests;
 
 import com.atlassian.bamboo.build.*;
+import com.atlassian.bamboo.deletion.*;
 import com.atlassian.bamboo.plan.*;
 import com.atlassian.bamboo.plan.branch.*;
 import com.atlassian.bamboo.plan.cache.*;
@@ -15,19 +16,19 @@ public class PullRequestBuilder
     private final PluginDataManager pluginData;
     private final GitHubCommunicator github;
 
-    public PullRequestBuilder(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager, PlanManager planManager,
+    public PullRequestBuilder(BranchDetectionService branchDetectionService,
+                              CachedPlanManager cachedPlanManager, PlanManager planManager, DeletionService deletionService,
                               VariableConfigurationService variableConfigurationService,
                               PlanExecutionManager planExecutionManager, PluginDataManager pluginData,
                               GitHubCommunicator github, BambooLinkBuilder bambooLinkBuilder)
     {
         this.pluginData = pluginData;
         this.github = github;
-        this.planTrigger = new PlanTrigger(branchDetectionService, cachedPlanManager, planManager, variableConfigurationService, planExecutionManager, bambooLinkBuilder);
+        this.planTrigger = new PlanTrigger(branchDetectionService, cachedPlanManager, planManager, variableConfigurationService, deletionService, planExecutionManager, bambooLinkBuilder);
     }
 
     public void build(String planKey, GitHubPullRequestEvent pullRequestEvent)
             throws PlanCreationDeniedException, SetPullRequestStatusException, Exception
-
     {
         PlanKey masterPlanKey = PlanKeys.getPlanKey(planKey);
 
@@ -36,9 +37,15 @@ public class PullRequestBuilder
         setPullRequestStatusToPending(planKey, pullRequestEvent, buildResultUrl);
     }
 
+    public void remove(String planKey, GitHubPullRequestEvent pullRequestEvent)
+    {
+        PlanKey masterPlanKey = PlanKeys.getPlanKey(planKey);
+
+        planTrigger.removeBranchPlan(masterPlanKey, pullRequestEvent.PullRequest);
+    }
+
     private void setPullRequestStatusToPending(String planKey, GitHubPullRequestEvent pullRequestEvent, String buildResultUrl)
             throws SetPullRequestStatusException
-
     {
         String token = pluginData.getConfig(planKey).getToken();
         GitHubSetCommitStatusRequest statusRequest = new GitHubSetCommitStatusRequest(GitHubCommitState.Pending, "The build is running", buildResultUrl);
@@ -56,6 +63,6 @@ public class PullRequestBuilder
     public PlanKey ensureBranchPlanExists(PlanKey planKey, GitHubPullRequest pullRequest)
             throws PlanCreationDeniedException, Exception
     {
-        return planTrigger.createPullRequestBranchPlan(planKey, pullRequest);
+        return planTrigger.findOrCreateBranchPlan(planKey, pullRequest);
     }
 }

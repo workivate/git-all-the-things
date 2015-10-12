@@ -3,6 +3,7 @@ package com.carolynvs.gitallthethings.github;
 import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
 import com.atlassian.bamboo.build.*;
+import com.atlassian.bamboo.deletion.*;
 import com.atlassian.bamboo.plan.*;
 import com.atlassian.bamboo.plan.branch.*;
 import com.atlassian.bamboo.plan.cache.*;
@@ -26,7 +27,8 @@ public class GitHubWebhook
     private final GitHubCommunicator github;
     private final PluginDataManager pluginData;
 
-    public GitHubWebhook(BranchDetectionService branchDetectionService, CachedPlanManager cachedPlanManager, PlanManager planManager,
+    public GitHubWebhook(BranchDetectionService branchDetectionService,
+                         CachedPlanManager cachedPlanManager, PlanManager planManager, DeletionService deletionService,
                          VariableConfigurationService variableConfigurationService,
                          PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService,
                          ActiveObjects ao)
@@ -34,7 +36,7 @@ public class GitHubWebhook
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
         BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
-        this.pullRequestBuilder = new PullRequestBuilder(branchDetectionService, cachedPlanManager, planManager, variableConfigurationService, planExecutionManager, pluginData, github, bambooLinkBuilder);
+        this.pullRequestBuilder = new PullRequestBuilder(branchDetectionService, cachedPlanManager, planManager, deletionService, variableConfigurationService, planExecutionManager, pluginData, github, bambooLinkBuilder);
 
     }
 
@@ -53,11 +55,20 @@ public class GitHubWebhook
         if(!github.validWebHook(webHookSecret, jsonBody, signature))
             return Response.status(Response.Status.UNAUTHORIZED).build();
 
+        if(isPullRequestClosed(pullRequestEvent))
+        {
+            pullRequestBuilder.remove(planKey, pullRequestEvent);
+            return Response.status(Response.Status.OK)
+                    .entity("The pull request build has been marked for deletion").build();
+        }
         if(!isPullRequestContentChanged(pullRequestEvent))
-            return Response.status(Response.Status.ACCEPTED).build();
+            return Response.status(Response.Status.ACCEPTED)
+                    .entity("The pull request build was not affected by the request and will be ignored").build();
 
         try {
             pullRequestBuilder.build(planKey, pullRequestEvent);
+            return Response.status(Response.Status.OK)
+                    .entity("The pull request has been placed in the build queue").build();
         } catch (PlanCreationDeniedException e) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity("You do not have permission to create a branch plan for the specified pull request").build();
@@ -67,9 +78,6 @@ public class GitHubWebhook
         } catch (Exception e) {
             return Response.serverError().entity(new ServerError(e).toJson()).build();
         }
-
-
-        return Response.status(Response.Status.OK).build();
     }
 
     private boolean isPing(String event)
@@ -79,7 +87,14 @@ public class GitHubWebhook
 
     private boolean isPullRequestContentChanged(GitHubPullRequestEvent pullRequestEvent)
     {
-        return PullRequestAction.OPENED.equals(pullRequestEvent.Action) || PullRequestAction.SYNCHRONIZE.equals(pullRequestEvent.Action);
+        return PullRequestAction.OPENED.equals(pullRequestEvent.Action) ||
+                PullRequestAction.SYNCHRONIZE.equals(pullRequestEvent.Action) ||
+                PullRequestAction.REOPENED.equals(pullRequestEvent.Action);
+    }
+
+    private boolean isPullRequestClosed(GitHubPullRequestEvent pullRequestEvent)
+    {
+        return PullRequestAction.CLOSED.equals(pullRequestEvent.Action);
     }
 
     private GitHubPullRequestEvent parsePullRequestEvent(String jsonBody)
