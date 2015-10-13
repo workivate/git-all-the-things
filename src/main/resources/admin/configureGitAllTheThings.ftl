@@ -11,11 +11,11 @@
 
 [@s.form action="saveGitAllTheThings" namespace="/admin" submitLabelKey="global.buttons.update" ]
 
-    [@ww.textfield labelKey="gitthings.admin.token" name="token" descriptionKey="gitthings.admin.token.description"/]
+    [@ww.textfield label="Token" name="token" description="A personal API token on GitHub"/]
 
-    [@ww.textfield labelKey="gitthings.admin.secret" name="secret" descriptionKey="gitthings.admin.secret.description"/]
+    [@ww.textfield label="WebHook Secret" name="secret" description="The webhook secret on GitHub. <a href='http://www.guidgen.com/' target='_blank'>Generate a secrete GUID</a>"/]
 
-    [@ww.textfield labelKey="gitthings.admin.botName" name="botName" descriptionKey="gitthings.admin.botName.description"/]
+    [@ww.textfield label="Bot Name" name="botName" description="The display name for triggered builds"/]
 
 [/@s.form]
 
