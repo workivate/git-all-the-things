@@ -93,6 +93,11 @@ public class PluginDataManager
             public String getName() {
                 return userName;
             }
+
+            @Override
+            public boolean isEnabled() {
+                return true;
+            }
         };
     }
 
