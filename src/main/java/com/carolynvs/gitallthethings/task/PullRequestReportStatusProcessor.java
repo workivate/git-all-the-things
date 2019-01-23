@@ -47,9 +47,6 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
     public BuildContext call()
             throws Exception
     {
-        if(!shouldUpdatePullRequestStatus())
-            return finalBuildContext;
-
         CurrentBuildResult finalBuildResult = finalBuildContext.getBuildResult();
         BuildState buildState = finalBuildResult.getBuildState();
         PullRequestBuildContext pullRequestBuildContext = new PullRequestBuildContext();
