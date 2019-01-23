@@ -1,16 +1,20 @@
 package com.carolynvs.gitallthethings.github;
 
 import com.atlassian.activeobjects.external.ActiveObjects;
-import com.atlassian.bamboo.admin.configuration.AdministrationConfigurationService;
-import com.atlassian.bamboo.build.*;
-import com.atlassian.bamboo.deletion.*;
-import com.atlassian.bamboo.plan.*;
-import com.atlassian.bamboo.plan.branch.*;
-import com.atlassian.bamboo.plan.cache.*;
-import com.atlassian.bamboo.variable.*;
+import com.atlassian.bamboo.build.PlanCreationDeniedException;
+import com.atlassian.bamboo.build.PlanCreationException;
+import com.atlassian.bamboo.deletion.DeletionService;
+import com.atlassian.bamboo.plan.PlanExecutionManager;
+import com.atlassian.bamboo.plan.PlanManager;
+import com.atlassian.bamboo.plan.branch.BranchDetectionService;
+import com.atlassian.bamboo.plan.cache.CachedPlanManager;
+import com.atlassian.bamboo.variable.VariableConfigurationService;
 import com.atlassian.plugins.rest.common.security.AnonymousAllowed;
-import com.carolynvs.gitallthethings.*;
-import com.carolynvs.gitallthethings.pullrequests.*;
+import com.carolynvs.gitallthethings.BambooLinkBuilder;
+import com.carolynvs.gitallthethings.PluginDataManager;
+import com.carolynvs.gitallthethings.ServerError;
+import com.carolynvs.gitallthethings.pullrequests.PullRequestAction;
+import com.carolynvs.gitallthethings.pullrequests.PullRequestBuilder;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.ws.rs.*;
@@ -30,12 +34,12 @@ public class GitHubWebhook
     public GitHubWebhook(BranchDetectionService branchDetectionService,
                          CachedPlanManager cachedPlanManager, PlanManager planManager, DeletionService deletionService,
                          VariableConfigurationService variableConfigurationService,
-                         PlanExecutionManager planExecutionManager, AdministrationConfigurationService administrationConfigurationService,
+                         PlanExecutionManager planExecutionManager,
                          ActiveObjects ao)
     {
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
-        BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
+        BambooLinkBuilder bambooLinkBuilder = new BambooLinkBuilder();
         this.pullRequestBuilder = new PullRequestBuilder(branchDetectionService, cachedPlanManager, planManager, deletionService, variableConfigurationService, planExecutionManager, pluginData, github, bambooLinkBuilder);
 
     }

@@ -1,20 +1,24 @@
 package com.carolynvs.gitallthethings.task;
 
-import com.atlassian.activeobjects.external.*;
-import com.atlassian.bamboo.admin.configuration.*;
+import com.atlassian.activeobjects.external.ActiveObjects;
 import com.atlassian.bamboo.build.BuildLoggerManager;
 import com.atlassian.bamboo.build.CustomBuildProcessorServer;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.builder.BuildState;
-import com.atlassian.bamboo.task.*;
-import com.atlassian.bamboo.v2.build.*;
-import com.carolynvs.gitallthethings.*;
-import com.carolynvs.gitallthethings.admin.*;
+import com.atlassian.bamboo.task.TaskDefinition;
+import com.atlassian.bamboo.v2.build.BuildContext;
+import com.atlassian.bamboo.v2.build.CurrentBuildResult;
+import com.carolynvs.gitallthethings.BambooLinkBuilder;
+import com.carolynvs.gitallthethings.PluginDataManager;
+import com.carolynvs.gitallthethings.admin.GitThingsConfig;
+import com.carolynvs.gitallthethings.github.GitHubCommitState;
+import com.carolynvs.gitallthethings.github.GitHubCommunicator;
+import com.carolynvs.gitallthethings.github.GitHubPullRequest;
+import com.carolynvs.gitallthethings.github.GitHubSetCommitStatusRequest;
 import com.carolynvs.gitallthethings.pullrequests.PullRequestBuildContext;
-import com.carolynvs.gitallthethings.github.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.Arrays;
 
 public class PullRequestReportStatusProcessor implements CustomBuildProcessorServer
 {
@@ -24,12 +28,12 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
     private final BambooLinkBuilder bambooLinkBuilder;
     private BuildContext finalBuildContext;
 
-    public PullRequestReportStatusProcessor(BuildLoggerManager buildLoggerManager, ActiveObjects ao, AdministrationConfigurationService administrationConfigurationService)
+    public PullRequestReportStatusProcessor(BuildLoggerManager buildLoggerManager, ActiveObjects ao)
     {
         this.buildLoggerManager = buildLoggerManager;
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
-        this.bambooLinkBuilder = new BambooLinkBuilder(administrationConfigurationService);
+        this.bambooLinkBuilder = new BambooLinkBuilder();
     }
 
     @Override
