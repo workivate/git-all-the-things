@@ -29,8 +29,8 @@ public class PluginDataManager
             public GitThingsConfig doInTransaction() {
                 GitThingsConfig[] rows = ao.find(GitThingsConfig.class,
                         Query.select()
-                                .where("plan_key = ? OR plan_key = ?", planKey, EMPTY_PLAN_KEY)
-                                .order("plan_key DESC"));
+                                .where("PLAN_KEY = ? OR PLAN_KEY = ?", planKey, EMPTY_PLAN_KEY)
+                                .order("PLAN_KEY DESC"));
 
                 GitThingsConfig config = rows.length > 0 ? rows[0] : new DefaultGitThingsConfig();
 
@@ -53,7 +53,7 @@ public class PluginDataManager
         ao.executeInTransaction(new TransactionCallback<GitThingsConfig>() {
             @Override
             public GitThingsConfig doInTransaction() {
-                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "plan_key = ?", planKey);
+                GitThingsConfig[] rows = ao.find(GitThingsConfig.class, "PLAN_KEY = ?", planKey);
                 GitThingsConfig config = rows.length > 0 ? rows[0] : ao.create(GitThingsConfig.class);
 
                 config.setToken(token);
