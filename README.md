@@ -4,4 +4,3 @@ Git ALL THE THINGS! is a plugin for Bamboo which provides some (hopefully) usefu
 
 * Automatically create branch plans for GitHub pull requests
 * Update GitHub pull requests with the build status
-* Git Checkout task clones a git repository using the git client. It never creates detached heads, always fetches tags and keeps it clean.

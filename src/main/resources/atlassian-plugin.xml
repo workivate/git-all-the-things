@@ -19,24 +19,6 @@
         <description>Provides a GitHub compatible webhook which triggers a build from a pull request</description>
     </rest>
 
-    <taskType key="PullRequestCheckoutTask" name="Pull Request Checkout" class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTask">
-        <description>Checkout a pull request from a git repository</description>
-        <category name="repository"/>
-        <resource type="download" name="icon" location="images/pullrequest.png"/>
-        <configuration class="com.carolynvs.gitallthethings.task.PullRequestCheckoutTaskConfigurator"/>
-        <resource type="freemarker" name="edit" location="task/edit-checkout.ftl"/>
-        <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>
-    </taskType>
-
-    <taskType key="GitCheckoutTask" name="Git Checkout" class="com.carolynvs.gitallthethings.task.GitCheckoutTask">
-        <description>Checkout a branch from a git repository</description>
-        <category name="repository"/>
-        <resource type="download" name="icon" location="images/pluginLogo.png"/>
-        <configuration class="com.carolynvs.gitallthethings.task.GitCheckoutTaskConfigurator"/>
-        <resource type="freemarker" name="edit" location="task/edit-checkout.ftl"/>
-        <resource type="freemarker" name="view" location="task/view-checkout.ftl"/>
-    </taskType>
-
     <buildProcessorServer key="PullRequestReportStatusProcessor" name="Pull Request Report Status Processor" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusProcessor">
         <skipIfFailed>false</skipIfFailed>
         <description>Report the build status of a pull request</description>

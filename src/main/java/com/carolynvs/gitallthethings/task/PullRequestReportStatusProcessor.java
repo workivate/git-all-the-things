@@ -5,7 +5,6 @@ import com.atlassian.bamboo.build.BuildLoggerManager;
 import com.atlassian.bamboo.build.CustomBuildProcessorServer;
 import com.atlassian.bamboo.build.logger.BuildLogger;
 import com.atlassian.bamboo.builder.BuildState;
-import com.atlassian.bamboo.task.TaskDefinition;
 import com.atlassian.bamboo.v2.build.BuildContext;
 import com.atlassian.bamboo.v2.build.CurrentBuildResult;
 import com.carolynvs.gitallthethings.BambooLinkBuilder;
@@ -20,16 +19,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
-public class PullRequestReportStatusProcessor implements CustomBuildProcessorServer
-{
+public class PullRequestReportStatusProcessor implements CustomBuildProcessorServer {
     private final GitHubCommunicator github;
     private final BuildLoggerManager buildLoggerManager;
     private final PluginDataManager pluginData;
     private final BambooLinkBuilder bambooLinkBuilder;
     private BuildContext finalBuildContext;
 
-    public PullRequestReportStatusProcessor(BuildLoggerManager buildLoggerManager, ActiveObjects ao)
-    {
+    public PullRequestReportStatusProcessor(BuildLoggerManager buildLoggerManager, ActiveObjects ao) {
         this.buildLoggerManager = buildLoggerManager;
         this.github = new GitHubCommunicator();
         this.pluginData = new PluginDataManager(ao);
@@ -37,16 +34,13 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
     }
 
     @Override
-    public void init(@NotNull BuildContext buildContext)
-    {
+    public void init(@NotNull BuildContext buildContext) {
         this.finalBuildContext = buildContext;
     }
 
     @NotNull
     @Override
-    public BuildContext call()
-            throws Exception
-    {
+    public BuildContext call() throws Exception {
         CurrentBuildResult finalBuildResult = finalBuildContext.getBuildResult();
         BuildState buildState = finalBuildResult.getBuildState();
         PullRequestBuildContext pullRequestBuildContext = new PullRequestBuildContext();
@@ -59,8 +53,7 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
         String buildResultUrl = bambooLinkBuilder.getBuildUrl(finalBuildContext.getParentBuildContext().getPlanResultKey().toString());
 
         GitHubPullRequest pullRequest = pullRequestBuildContext.getPullRequest(finalBuildContext, logger);
-        if(pullRequest == null)
-        {
+        if (pullRequest == null) {
             failBuild("Could not set pull request status because the pull request metadata could not be found.", finalBuildResult, logger, null);
             return finalBuildContext;
         }
@@ -76,20 +69,9 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
         return finalBuildContext;
     }
 
-    private void failBuild(String errorMessage, CurrentBuildResult buildResult, BuildLogger logger, Exception ex)
-    {
+    private void failBuild(String errorMessage, CurrentBuildResult buildResult, BuildLogger logger, Exception ex) {
         logger.addErrorLogEntry(errorMessage, ex);
         buildResult.addBuildErrors(Arrays.asList(errorMessage));
         buildResult.setBuildState(BuildState.FAILED);
-    }
-
-    private boolean shouldUpdatePullRequestStatus()
-    {
-        for (TaskDefinition taskDefinition : finalBuildContext.getBuildDefinition().getTaskDefinitions())
-        {
-            if(taskDefinition.getPluginKey().equals("com.carolynvs.gitallthethings:PullRequestCheckoutTask"))
-                return true;
-        }
-        return false;
     }
 }
