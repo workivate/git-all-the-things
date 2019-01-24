@@ -20,7 +20,7 @@
     </rest>
 
     <buildProcessorServer key="PullRequestReportStatusProcessor" name="Pull Request Report Status Processor" class="com.carolynvs.gitallthethings.task.PullRequestReportStatusProcessor">
-        <skipIfFailed>false</skipIfFailed>
+        <skipIfFailed>true</skipIfFailed>
         <description>Report the build status of a pull request</description>
     </buildProcessorServer>
 

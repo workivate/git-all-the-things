@@ -54,7 +54,7 @@ public class PullRequestReportStatusProcessor implements CustomBuildProcessorSer
 
         GitHubPullRequest pullRequest = pullRequestBuildContext.getPullRequest(finalBuildContext, logger);
         if (pullRequest == null) {
-            failBuild("Could not set pull request status because the pull request metadata could not be found.", finalBuildResult, logger, null);
+            logger.addBuildLogEntry("Could not set pull request status because the pull request metadata could not be found.");
             return finalBuildContext;
         }
 
