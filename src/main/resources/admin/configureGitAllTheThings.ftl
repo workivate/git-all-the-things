@@ -42,6 +42,7 @@
                 <em>Payload URL</em> is http://BAMBOO_URL/bamboo/rest/github-webhook/1.0/pullrequest-trigger/PLAN_KEY.
                 Replace <strong>BAMBOO_URL</strong> with your Bamboo installation URL (including the port) and
                 <strong>PLAN_KEY</strong> with the plan key where pull request branch builds should be created.
+                Depending on your Bamboo installation you may need to omit <em>/bamboo</em> from the URL.
             </li>
             <li>
                 <em>Content Type</em> is <strong>application/json</strong>.
@@ -61,6 +62,10 @@
     <li>
         <em>Bot Name</em> is the name displayed in Bamboo as the user which triggered a build when a pull request is
         created or updated.
+    </li>
+    <li>
+        Ensure your Bamboo build plan has View permissions for anonymous users.
+        Navigate to the plan configuration, permissions tab. Tick the box so that <em>Other Users</em> are permitted to <em>View</em>.
     </li>
 </ol>
 </body>
