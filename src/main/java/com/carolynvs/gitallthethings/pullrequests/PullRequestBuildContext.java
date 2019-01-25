@@ -19,7 +19,7 @@ public class PullRequestBuildContext
         Map<String, VariableDefinitionContext> buildVars = buildContext.getVariableContext().getEffectiveVariables();
 
         if (!buildVars.containsKey(PULLREQUEST_NUMBER_VAR) || !buildVars.containsKey(PULLREQUEST_STATUS_URL_VAR)) {
-            logger.addErrorLogEntry("The pullrequest variables are not set. If you are running a manual build, you must set the pullrequest.number and pullrequest.statusurl variables, i.e. run a customized build and override these variables with the desired pull request and the URL to which the status should be reported.");
+            logger.addBuildLogEntry("The pullrequest variables are not set. If you are running a manual build, you must set the pullrequest.number and pullrequest.statusurl variables, i.e. run a customized build and override these variables with the desired pull request and the URL to which the status should be reported.");
             return null;
         }
 
